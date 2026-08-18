@@ -37,16 +37,12 @@ check `node_modules/next/dist/docs/01-app/` for the current API. Notably:
 - Turbopack is the default bundler for both `next dev` and `next build` (no `--turbopack` flag needed).
 - `next lint` was removed; linting runs via the ESLint CLI directly.
 
-## Commands
 
-```bash
-npm run dev     # start dev server (Turbopack)
-npm run build   # production build (Turbopack)
-npm run start   # run the production build
-npm run lint    # eslint (flat config, eslint.config.mjs)
-```
 
-There is no test runner configured in this project yet.
+
+## Skills
+Usa siempre /frontend-design cuando quieras hacer diseños de interfaces de usuario.
+
 
 ## Architecture
 

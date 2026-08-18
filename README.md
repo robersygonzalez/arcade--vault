@@ -15,4 +15,13 @@ https://github.com/Klerith/fernando-skills
 npx skills@latest add Klerith/fernando-skills
 ```
 
-## Hola Mundo
+## Commands
+
+```bash
+npm run dev     # start dev server (Turbopack)
+npm run build   # production build (Turbopack)
+npm run start   # run the production build
+npm run lint    # eslint (flat config, eslint.config.mjs)
+```
+
+There is no test runner configured in this project yet.
