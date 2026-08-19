@@ -1,6 +1,6 @@
 # SPEC 01 — MVP: pantallas visuales de Arcade Vault
 
-> **Status:** Apobado
+> **Status:** Implementado
 > **Depends on:** —
 > **Date:** 2026-08-18
 > **Objective:** Migrar las 5 pantallas del prototipo estático en `references/templates/` (Biblioteca, Detalle, Reproductor, Auth, Salón de la Fama) a rutas reales de Next.js App Router, sin implementar ningún juego jugable de verdad.
@@ -79,18 +79,18 @@ Convenciones:
 
 ## Acceptance criteria
 
-- [ ] `npm run build` termina sin errores.
-- [ ] `/` muestra la Biblioteca; buscar "caida" filtra a 1 resultado; los chips de categoría filtran el grid.
-- [ ] Click en una card navega a `/juegos/[id]` y muestra la info y el leaderboard de ese juego.
-- [ ] "JUGAR AHORA" en `/juegos/[id]` navega a `/juegos/[id]/jugar` y muestra el HUD + pantalla CRT con la puntuación subiendo sola.
-- [ ] "PAUSA" detiene el incremento de puntuación; "REANUDAR" lo continúa.
-- [ ] "FIN" abre el modal de fin de partida; guardar la puntuación la persiste en `localStorage["av_scores"]` y muestra el toast "PUNTUACIÓN GUARDADA".
-- [ ] `/login` permite iniciar sesión con cualquier usuario/contraseña o entrar como invitado; tras iniciar sesión el nombre aparece en el Nav.
-- [ ] Recargar la página después de iniciar sesión conserva la sesión (`localStorage["av_user"]`).
-- [ ] Cerrar sesión desde el Nav limpia `av_user` y el botón vuelve a mostrar "Iniciar Sesión".
-- [ ] `/salon-de-la-fama` muestra podio y tabla por juego, cambia de juego con los tabs, y muestra la fila "tu mejor marca" solo con sesión iniciada.
-- [ ] El menú móvil (hamburguesa) abre/cierra en pantallas angostas y navega a las mismas rutas que el nav de escritorio.
-- [ ] Las 5 pantallas coinciden visualmente con `references/templates/*.jsx` (colores neón, tipografías pixel/mono, efectos CRT/scanlines).
+- [x] `npm run build` termina sin errores.
+- [x] `/` muestra la Biblioteca; buscar "caida" filtra a 1 resultado; los chips de categoría filtran el grid.
+- [x] Click en una card navega a `/juegos/[id]` y muestra la info y el leaderboard de ese juego.
+- [x] "JUGAR AHORA" en `/juegos/[id]` navega a `/juegos/[id]/jugar` y muestra el HUD + pantalla CRT con la puntuación subiendo sola.
+- [x] "PAUSA" detiene el incremento de puntuación; "REANUDAR" lo continúa.
+- [x] "FIN" abre el modal de fin de partida; guardar la puntuación la persiste en `localStorage["av_scores"]` y muestra el toast "PUNTUACIÓN GUARDADA".
+- [x] `/login` permite iniciar sesión con cualquier usuario/contraseña o entrar como invitado; tras iniciar sesión el nombre aparece en el Nav.
+- [x] Recargar la página después de iniciar sesión conserva la sesión (`localStorage["av_user"]`).
+- [x] Cerrar sesión desde el Nav limpia `av_user` y el botón vuelve a mostrar "Iniciar Sesión".
+- [x] `/salon-de-la-fama` muestra podio y tabla por juego, cambia de juego con los tabs, y muestra la fila "tu mejor marca" solo con sesión iniciada.
+- [x] El menú móvil (hamburguesa) abre/cierra en pantallas angostas y navega a las mismas rutas que el nav de escritorio.
+- [x] Las 5 pantallas coinciden visualmente con `references/templates/*.jsx` (colores neón, tipografías pixel/mono, efectos CRT/scanlines).
 
 ## Decisions
 
