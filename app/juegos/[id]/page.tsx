@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { GAMES, seededScores } from "@/app/data/games";
+
+export async function generateMetadata({ params }: PageProps<"/juegos/[id]">): Promise<Metadata> {
+  const { id } = await params;
+  const game = GAMES.find((g) => g.id === id);
+  return { title: game ? `${game.title} · Arcade Vault` : "Arcade Vault" };
+}
 
 export default async function GameDetailPage({ params }: PageProps<"/juegos/[id]">) {
   const { id } = await params;
