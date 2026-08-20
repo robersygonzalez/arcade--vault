@@ -42,19 +42,19 @@ No se introducen estructuras de datos nuevas ni persistentes.
 
 ## Acceptance criteria
 
-- [ ] `npm run build` termina sin errores.
-- [ ] `/` muestra la nueva Home (hero, "¿Por qué Arcade Vault?", juegos destacados, stats, actividad en vivo, precios/FAQ, CTA final), con las animaciones `.reveal` activándose al hacer scroll.
-- [ ] `/games` muestra la Biblioteca con el mismo comportamiento que antes de este spec (buscador, chips de categoría, grid de juegos).
-- [ ] El Nav muestra los links "Inicio", "Biblioteca" y "Salón de la Fama"; "Inicio" está activo solo en `/`, "Biblioteca" está activo en `/games` y en `/juegos/[id]`.
-- [ ] El logo del Nav navega a `/`.
-- [ ] "EXPLORAR JUEGOS", "VER TODOS LOS JUEGOS →" e "INSERTAR MONEDA →" en el Home navegan a `/games`.
-- [ ] "CREAR CUENTA" y "EMPEZAR GRATIS →" en el Home navegan a `/login`.
-- [ ] Click en una mini-card de juego del Home navega a `/juegos/[id]` del juego correspondiente.
-- [ ] "VER SALÓN →" en el Home navega a `/salon-de-la-fama`.
-- [ ] "VOLVER AL VAULT" (detalle y reproductor) y "VOLVER A LA BIBLIOTECA" (salón de la fama) navegan a `/games`.
-- [ ] Iniciar sesión, crear cuenta o entrar como invitado desde `/login` redirige a `/games`.
-- [ ] El Home coincide visualmente con `references/templates/home-about/home.jsx` (colores neón, tipografías pixel/mono, silhouettes flotantes, ticker de actividad, ranking de top jugadores, tarjeta de precios).
-- [ ] El menú móvil del Nav incluye "Inicio" y navega correctamente.
+- [x] `npm run build` termina sin errores.
+- [x] `/` muestra la nueva Home (hero, "¿Por qué Arcade Vault?", juegos destacados, stats, actividad en vivo, precios/FAQ, CTA final), con las animaciones `.reveal` activándose al hacer scroll.
+- [x] `/games` muestra la Biblioteca con el mismo comportamiento que antes de este spec (buscador, chips de categoría, grid de juegos).
+- [x] El Nav muestra los links "Inicio", "Biblioteca" y "Salón de la Fama"; "Inicio" está activo solo en `/`, "Biblioteca" está activo en `/games` y en `/juegos/[id]`.
+- [x] El logo del Nav navega a `/`.
+- [x] "EXPLORAR JUEGOS", "VER TODOS LOS JUEGOS →" e "INSERTAR MONEDA →" en el Home navegan a `/games`.
+- [x] "CREAR CUENTA" y "EMPEZAR GRATIS →" en el Home navegan a `/login`.
+- [x] Click en una mini-card de juego del Home navega a `/juegos/[id]` del juego correspondiente.
+- [x] "VER SALÓN →" en el Home navega a `/salon-de-la-fama`.
+- [x] "VOLVER AL VAULT" (detalle y reproductor) y "VOLVER A LA BIBLIOTECA" (salón de la fama) navegan a `/games`.
+- [x] Iniciar sesión, crear cuenta o entrar como invitado desde `/login` redirige a `/games`.
+- [x] El Home coincide visualmente con `references/templates/home-about/home.jsx` (colores neón, tipografías pixel/mono, silhouettes flotantes, ticker de actividad, ranking de top jugadores, tarjeta de precios).
+- [x] El menú móvil del Nav incluye "Inicio" y navega correctamente.
 
 ## Decisions
 
