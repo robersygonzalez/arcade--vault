@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import Home from "@/components/home";
+import Library from "@/components/library";
 
 export const metadata: Metadata = {
-  title: "Arcade Vault · Inicio",
+  title: "Arcade Vault · Biblioteca",
 };
 
 export default function Page() {
-  return <Home />;
+  return <Library />;
 }
