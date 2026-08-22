@@ -1,6 +1,6 @@
 # SPEC 03 — Página About y envío real de correo con Resend
 
-> **Status:** Draft
+> **Status:** Aprobado
 > **Depends on:** SPEC 02 (pagina-inicio)
 > **Date:** 2026-08-21
 > **Objective:** Migrar `about.jsx` de `references/templates/home-about/` a la ruta `/about` de Arcade Vault, agregar el link "Sobre nosotros" al Nav, y conectar su formulario de contacto a un envío de correo real vía Resend a través de `app/api/contact`.
