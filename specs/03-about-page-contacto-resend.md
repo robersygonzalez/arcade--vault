@@ -1,6 +1,6 @@
 # SPEC 03 — Página About y envío real de correo con Resend
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 02 (pagina-inicio)
 > **Date:** 2026-08-21
 > **Objective:** Migrar `about.jsx` de `references/templates/home-about/` a la ruta `/about` de Arcade Vault, agregar el link "Sobre nosotros" al Nav, y conectar su formulario de contacto a un envío de correo real vía Resend a través de `app/api/contact`.
@@ -60,15 +60,15 @@ Variable de entorno (secreta, en `.env.local`, sin valor por ahora):
 
 ## Acceptance criteria
 
-- [ ] `npm run build` termina sin errores.
-- [ ] `/about` muestra el hero "ACERCA DE ARCADE VAULT", la fila de highlights, el divisor animado y la sección de contacto, con las animaciones `.reveal` activándose al hacer scroll.
-- [ ] El Nav (escritorio y menú móvil) muestra el link "Sobre nosotros" apuntando a `/about`, activo solo en esa ruta.
-- [ ] Enviar el formulario con algún campo vacío agita el formulario (`shake`) y no llama a `/api/contact`.
-- [ ] Enviar el formulario completo llama a `POST /api/contact`; mientras espera la respuesta el botón indica estado de envío (`submitting`).
-- [ ] Si `/api/contact` responde `ok: true`, se muestra el mismo bloque `terminal-success` del template con el nombre del usuario, y "ENVIAR OTRO MENSAJE" reinicia el formulario.
-- [ ] Si `/api/contact` responde `ok: false` (por ejemplo, `RESEND_API_KEY` vacía), se muestra el mensaje de error inline debajo del botón y los datos escritos por el usuario permanecen en el formulario.
-- [ ] `app/api/contact/route.ts` no envía el correo si `name`, `email` o `msg` vienen vacíos (responde `400`).
-- [ ] `.env.local` existe con `RESEND_API_KEY=` vacía y no se sube a git (ya cubierto por `.env*` en `.gitignore`).
+- [x] `npm run build` termina sin errores.
+- [x] `/about` muestra el hero "ACERCA DE ARCADE VAULT", la fila de highlights, el divisor animado y la sección de contacto, con las animaciones `.reveal` activándose al hacer scroll.
+- [x] El Nav (escritorio y menú móvil) muestra el link "Sobre nosotros" apuntando a `/about`, activo solo en esa ruta.
+- [x] Enviar el formulario con algún campo vacío agita el formulario (`shake`) y no llama a `/api/contact`.
+- [x] Enviar el formulario completo llama a `POST /api/contact`; mientras espera la respuesta el botón indica estado de envío (`submitting`).
+- [x] Si `/api/contact` responde `ok: true`, se muestra el mismo bloque `terminal-success` del template con el nombre del usuario, y "ENVIAR OTRO MENSAJE" reinicia el formulario.
+- [x] Si `/api/contact` responde `ok: false` (por ejemplo, `RESEND_API_KEY` vacía), se muestra el mensaje de error inline debajo del botón y los datos escritos por el usuario permanecen en el formulario.
+- [x] `app/api/contact/route.ts` no envía el correo si `name`, `email` o `msg` vienen vacíos (responde `400`).
+- [x] `.env.local` existe con `RESEND_API_KEY=` vacía y no se sube a git (cubierto agregando `.env.local` a `.gitignore`, ya que el `.env*` mencionado originalmente no estaba en el archivo).
 
 ## Decisions
 
