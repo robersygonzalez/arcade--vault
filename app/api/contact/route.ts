@@ -10,10 +10,8 @@ export async function POST(request: Request) {
   const { name, email, msg } = (await request.json()) as ContactPayload;
 
   if (!name || !email || !msg) {
-    return Response.json<ContactResponse>(
-      { ok: false, error: "Nombre, correo y mensaje son obligatorios." },
-      { status: 400 }
-    );
+    const body: ContactResponse = { ok: false, error: "Nombre, correo y mensaje son obligatorios." };
+    return Response.json(body, { status: 400 });
   }
 
   const resend = new Resend(process.env.RESEND_API_KEY);
@@ -27,11 +25,10 @@ export async function POST(request: Request) {
   });
 
   if (error) {
-    return Response.json<ContactResponse>(
-      { ok: false, error: error.message },
-      { status: 500 }
-    );
+    const body: ContactResponse = { ok: false, error: error.message };
+    return Response.json(body, { status: 500 });
   }
 
-  return Response.json<ContactResponse>({ ok: true });
+  const body: ContactResponse = { ok: true };
+  return Response.json(body);
 }
