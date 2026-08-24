@@ -1,0 +1,9 @@
+node_modules
+.next
+out
+build
+coverage
+package-lock.json
+.playwright-mcp
+.playwright-screenshots
+next-env.d.ts
