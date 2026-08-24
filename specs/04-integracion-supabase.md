@@ -14,7 +14,7 @@ El proyecto Supabase ya está aprovisionado (`.env.local`/`.env.template` ya tie
 **In:**
 
 - Instalar `@supabase/supabase-js` y `@supabase/ssr` en `package.json`.
-- Agregar `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY` a `.env.local` (valores reales del proyecto `iitjdgzcycdvbwbqtdnp`) y a `.env.template` (placeholders, mismo formato que `RESEND_API_KEY=xxxxxxxxxx`).
+- Agregar `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` a `.env.local` (valores reales del proyecto `iitjdgzcycdvbwbqtdnp`) y a `.env.template` (placeholders, mismo formato que `RESEND_API_KEY=xxxxxxxxxx`).
 - Crear `utils/supabase/client.ts`: cliente de browser (`createBrowserClient`).
 - Crear `utils/supabase/server.ts`: cliente de servidor (`createServerClient`) usando `cookies()` de `next/headers` (async en esta versión de Next).
 - Verificar `npm run build` (sin ruta de prueba ni llamada real a la API de Supabase).
@@ -39,11 +39,11 @@ Variables de entorno que se agregan:
 ```
 # .env.local (valores reales)
 NEXT_PUBLIC_SUPABASE_URL=https://iitjdgzcycdvbwbqtdnp.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<legacy anon JWT del proyecto>
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<publishable key del proyecto, sb_publishable_...>
 
 # .env.template (placeholders)
 NEXT_PUBLIC_SUPABASE_URL=xxxxxxxxxx
-NEXT_PUBLIC_SUPABASE_ANON_KEY=xxxxxxxxxx
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=xxxxxxxxxx
 ```
 
 `SUPABASE_DB_PASSWORD` (ya existente en ambos archivos) no se usa en esta spec — queda reservada para conexión directa a Postgres (migraciones/CLI) en un spec futuro.
@@ -51,16 +51,16 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=xxxxxxxxxx
 ## Implementation plan
 
 1. `npm install @supabase/supabase-js @supabase/ssr`.
-2. Agregar `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY` a `.env.local` con los valores reales del proyecto, y las mismas dos claves con placeholder `xxxxxxxxxx` a `.env.template`.
-3. Crear `utils/supabase/client.ts`: exporta `createClient()` que llama `createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)` de `@supabase/ssr`.
-4. Crear `utils/supabase/server.ts`: exporta una función `async createClient()` que obtiene `await cookies()` de `next/headers` y llama `createServerClient(url, anonKey, { cookies: { getAll, setAll } })`, con `setAll` envuelto en `try/catch` (patrón oficial, ya que `cookies().set` puede fallar en Server Components).
+2. Agregar `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` a `.env.local` con los valores reales del proyecto, y las mismas dos claves con placeholder `xxxxxxxxxx` a `.env.template`.
+3. Crear `utils/supabase/client.ts`: exporta `createClient()` que llama `createBrowserClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!)` de `@supabase/ssr`.
+4. Crear `utils/supabase/server.ts`: exporta una función `async createClient()` que obtiene `await cookies()` de `next/headers` y llama `createServerClient(url, publishableKey, { cookies: { getAll, setAll } })`, con `setAll` envuelto en `try/catch` (patrón oficial, ya que `cookies().set` puede fallar en Server Components).
 5. Correr `npm run build` para confirmar que ambos archivos compilan y tipan correctamente. No se crea ninguna ruta que llame a la API de Supabase en tiempo de ejecución.
 
 ## Acceptance criteria
 
 - [ ] `npm run build` termina sin errores.
 - [ ] `@supabase/supabase-js` y `@supabase/ssr` aparecen en `package.json`.
-- [ ] `.env.local` contiene `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY` con los valores reales del proyecto.
+- [ ] `.env.local` contiene `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` con los valores reales del proyecto.
 - [ ] `.env.template` contiene las mismas dos claves con valores placeholder, sin datos reales.
 - [ ] No existe `proxy.ts` en la raíz ni ninguna ruta que llame a `supabase.auth.*`.
 - [ ] No se crea ninguna tabla nueva en la base de datos del proyecto Supabase (`list_tables` sigue devolviendo 0 tablas en `public`).
@@ -69,7 +69,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=xxxxxxxxxx
 ## Decisions
 
 - **Sí:** se crean `utils/supabase/client.ts` y `utils/supabase/server.ts` siguiendo el patrón oficial `@supabase/ssr` — decisión explícita del usuario, como base para specs futuros que sí consulten la base de datos.
-- **Sí:** nombres de variables de entorno clásicos `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` (legacy anon JWT) en vez de la convención nueva `..._PUBLISHABLE_KEY` — decisión explícita del usuario.
+- **Sí:** nombres de variables de entorno `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (la convención nueva de Supabase, `sb_publishable_...`) en vez del legacy `..._ANON_KEY` — decisión explícita del usuario durante la implementación (revierte la decisión original de esta spec, que había elegido el legacy anon key).
 - **No:** `proxy.ts` — es una pieza de Auth (refresco de sesión) y el usuario no quiere nada de Auth todavía, ni siquiera temporal. Se agrega en el spec futuro de autenticación visual.
 - **No:** ruta de verificación (`/api/supabase-check` o similar) — la versión anterior de esta spec la proponía usando `supabase.auth.getUser()`, pero eso es Auth; el usuario pidió explícitamente quitarla. La verificación de esta spec es solo que el build pase.
 - **No:** cliente con `SUPABASE_SERVICE_ROLE_KEY` (admin) — no hay caso de uso todavía; se agrega en el spec que lo necesite (ej. Edge Functions).
@@ -79,11 +79,10 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=xxxxxxxxxx
 
 ## Risks
 
-| Risk                                                                                                                                                                         | Mitigation                                                                                                                                                                 |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Supabase está migrando de "legacy anon key" (JWT) a "publishable key" (`sb_publishable_...`); la legacy podría deprecarse más adelante.                                      | El proyecto ya expone ambas keys; cambiar a `..._PUBLISHABLE_KEY` en el futuro es solo actualizar el nombre de la env var y el valor, sin tocar la lógica de los clientes. |
-| Sin `proxy.ts` ni ruta de verificación, un error de configuración (env var mal escrita, key inválida) no se detecta hasta que un spec futuro haga la primera query real.     | Aceptado explícitamente por el usuario como parte del scope reducido de esta spec; el spec que agregue la primera query real deberá validar la conexión en ese momento.    |
-| `SUPABASE_DB_PASSWORD` ya está en `.env.local`/`.env.template` pero no se usa en esta spec — riesgo de que alguien asuma que ya hay conexión directa a Postgres configurada. | Documentado explícitamente en "Data model" que esa variable queda reservada para un spec futuro (migraciones/CLI).                                                         |
+| Risk                                                                                                                                                                         | Mitigation                                                                                                                                                              |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Sin `proxy.ts` ni ruta de verificación, un error de configuración (env var mal escrita, key inválida) no se detecta hasta que un spec futuro haga la primera query real.     | Aceptado explícitamente por el usuario como parte del scope reducido de esta spec; el spec que agregue la primera query real deberá validar la conexión en ese momento. |
+| `SUPABASE_DB_PASSWORD` ya está en `.env.local`/`.env.template` pero no se usa en esta spec — riesgo de que alguien asuma que ya hay conexión directa a Postgres configurada. | Documentado explícitamente en "Data model" que esa variable queda reservada para un spec futuro (migraciones/CLI).                                                      |
 
 ## What is **not** in this spec
 
