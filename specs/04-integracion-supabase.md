@@ -1,6 +1,6 @@
 # SPEC 04 — Integración base de Supabase (cliente DB, sin auth)
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** Ninguno
 > **Date:** 2026-08-24
 > **Objective:** Conectar Arcade Vault al proyecto Supabase ya existente (`iitjdgzcycdvbwbqtdnp`) instalando y configurando los clientes de `@supabase/ssr` para leer/escribir datos (browser y server), sin ninguna pieza de Auth — ni siquiera temporal.
@@ -58,13 +58,13 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=xxxxxxxxxx
 
 ## Acceptance criteria
 
-- [ ] `npm run build` termina sin errores.
-- [ ] `@supabase/supabase-js` y `@supabase/ssr` aparecen en `package.json`.
-- [ ] `.env.local` contiene `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` con los valores reales del proyecto.
-- [ ] `.env.template` contiene las mismas dos claves con valores placeholder, sin datos reales.
-- [ ] No existe `proxy.ts` en la raíz ni ninguna ruta que llame a `supabase.auth.*`.
-- [ ] No se crea ninguna tabla nueva en la base de datos del proyecto Supabase (`list_tables` sigue devolviendo 0 tablas en `public`).
-- [ ] `login-form.tsx`, `user-context.tsx`, `game-player.tsx` y `hall-of-fame.tsx` no cambian de comportamiento — siguen usando `localStorage`/`seededScores()` tal cual.
+- [x] `npm run build` termina sin errores.
+- [x] `@supabase/supabase-js` y `@supabase/ssr` aparecen en `package.json`.
+- [x] `.env.local` contiene `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` con los valores reales del proyecto.
+- [x] `.env.template` contiene las mismas dos claves con valores placeholder, sin datos reales.
+- [x] No existe `proxy.ts` en la raíz ni ninguna ruta que llame a `supabase.auth.*`.
+- [x] No se crea ninguna tabla nueva en la base de datos del proyecto Supabase (`list_tables` sigue devolviendo 0 tablas en `public`).
+- [x] `login-form.tsx`, `user-context.tsx`, `game-player.tsx` y `hall-of-fame.tsx` no cambian de comportamiento — siguen usando `localStorage`/`seededScores()` tal cual.
 
 ## Decisions
 
