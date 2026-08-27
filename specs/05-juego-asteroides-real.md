@@ -1,6 +1,6 @@
 # SPEC 05 — Juego real de Asteroids
 
-> **Status:** Draft
+> **Status:** Aprobado
 > **Depends on:** SPEC 01 (mvp-pantallas-visuales)
 > **Date:** 2026-08-26
 > **Objective:** Conectar el juego de Asteroids ya creado en `references/started-games/02-asteroids/` a Arcade Vault como una nueva entrada jugable de verdad (`asteroides`) en el reproductor, con HUD, pausa y guardado de puntuación reales, sin tocar los demás juegos decorativos.
