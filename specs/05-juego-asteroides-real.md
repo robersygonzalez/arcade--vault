@@ -1,6 +1,6 @@
 # SPEC 05 — Juego real de Asteroids
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 01 (mvp-pantallas-visuales)
 > **Date:** 2026-08-26
 > **Objective:** Conectar el juego de Asteroids ya creado en `references/started-games/02-asteroids/` a Arcade Vault como una nueva entrada jugable de verdad (`asteroides`) en el reproductor, con HUD, pausa y guardado de puntuación reales, sin tocar los demás juegos decorativos.
@@ -80,21 +80,21 @@ Componente `forwardRef<AsteroidsGameHandle, AsteroidsGameProps>`.
 
 ## Acceptance criteria
 
-- [ ] `npm run build` termina sin errores.
-- [ ] `/juegos/asteroides` muestra la card y el detalle con la nueva entrada (título "ASTEROIDES", categoría SHOOTER).
-- [ ] `/juegos/asteroides/jugar` carga el canvas real del juego (nave, asteroides) con el HUD de React (Puntuación/Vidas/Nivel) sincronizado.
-- [ ] `ArrowLeft`/`ArrowRight` rotan la nave, `ArrowUp` acelera (con estela del propulsor), `Space` dispara; ninguna de esas teclas scrollea la página.
-- [ ] Destruir un asteroide grande lo divide en dos medianos y estos en dos pequeños; los pequeños desaparecen sin dividirse; la puntuación del HUD sube según el tamaño destruido.
-- [ ] Recoger el power-up cian activa disparo triple durante 5s, visible como "3x" en el canvas.
-- [ ] Chocar con un asteroide sin invencibilidad resta una vida (el HUD de React lo refleja) y la nave reaparece con parpadeo de invencibilidad.
-- [ ] PAUSA congela el juego (nave/asteroides dejan de moverse); REANUDAR lo continúa exactamente donde quedó.
-- [ ] FIN fuerza el fin de partida y abre el modal "FIN DEL JUEGO" con la puntuación real alcanzada.
-- [ ] Quedarse sin vidas (lives = 0) también abre el mismo modal automáticamente, sin pulsar FIN.
-- [ ] Guardar la puntuación desde el modal la persiste en `localStorage["av_scores"]` con `game: "asteroides"`, igual que los demás juegos.
-- [ ] "JUGAR DE NUEVO" reinicia el juego real desde cero (score 0, 3 vidas, nivel 1) dentro de la misma pantalla.
-- [ ] "SALIR" navega a `/juegos/asteroides` sin dejar el loop corriendo ni listeners de teclado activos (sin warnings de React en consola por actualizar estado tras desmontar).
-- [ ] Limpiar un nivel (0 asteroides restantes) genera el siguiente nivel con más rocas, y el HUD de React muestra el nivel incrementado.
-- [ ] El resto de los juegos (`bloque-buster`, `caída`, `serpentina`, `glotón`, `invasores`, `rocas`, `ranaria`, `duelo-pixel`) siguen mostrando el reproductor decorativo sin cambios.
+- [x] `npm run build` termina sin errores.
+- [x] `/juegos/asteroides` muestra la card y el detalle con la nueva entrada (título "ASTEROIDES", categoría SHOOTER).
+- [x] `/juegos/asteroides/jugar` carga el canvas real del juego (nave, asteroides) con el HUD de React (Puntuación/Vidas/Nivel) sincronizado.
+- [x] `ArrowLeft`/`ArrowRight` rotan la nave, `ArrowUp` acelera (con estela del propulsor), `Space` dispara; ninguna de esas teclas scrollea la página.
+- [x] Destruir un asteroide grande lo divide en dos medianos y estos en dos pequeños; los pequeños desaparecen sin dividirse; la puntuación del HUD sube según el tamaño destruido.
+- [x] Recoger el power-up cian activa disparo triple durante 5s, visible como "3x" en el canvas.
+- [x] Chocar con un asteroide sin invencibilidad resta una vida (el HUD de React lo refleja) y la nave reaparece con parpadeo de invencibilidad.
+- [x] PAUSA congela el juego (nave/asteroides dejan de moverse); REANUDAR lo continúa exactamente donde quedó.
+- [x] FIN fuerza el fin de partida y abre el modal "FIN DEL JUEGO" con la puntuación real alcanzada.
+- [x] Quedarse sin vidas (lives = 0) también abre el mismo modal automáticamente, sin pulsar FIN.
+- [x] Guardar la puntuación desde el modal la persiste en `localStorage["av_scores"]` con `game: "asteroides"`, igual que los demás juegos.
+- [x] "JUGAR DE NUEVO" reinicia el juego real desde cero (score 0, 3 vidas, nivel 1) dentro de la misma pantalla.
+- [x] "SALIR" navega a `/juegos/asteroides` sin dejar el loop corriendo ni listeners de teclado activos (sin warnings de React en consola por actualizar estado tras desmontar).
+- [x] Limpiar un nivel (0 asteroides restantes) genera el siguiente nivel con más rocas, y el HUD de React muestra el nivel incrementado.
+- [x] El resto de los juegos (`bloque-buster`, `caída`, `serpentina`, `glotón`, `invasores`, `rocas`, `ranaria`, `duelo-pixel`) siguen mostrando el reproductor decorativo sin cambios.
 
 ## Decisions
 
