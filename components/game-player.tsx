@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Game } from "@/app/data/games";
 import { useUser } from "@/components/user-context";
+import { createClient } from "@/utils/supabase/client";
 import AsteroidsGame, { type AsteroidsGameHandle } from "@/components/asteroids-game";
 
 export default function GamePlayer({ game }: { game: Game }) {
@@ -57,13 +58,10 @@ export default function GamePlayer({ game }: { game: Game }) {
     setSaved(false);
   };
 
-  const saveScore = () => {
-    try {
-      const all = JSON.parse(localStorage.getItem("av_scores") || "[]");
-      all.push({ game: game.id, score, name, at: Date.now() });
-      localStorage.setItem("av_scores", JSON.stringify(all));
-    } catch {}
-    setSaved(true);
+  const saveScore = async () => {
+    const supabase = createClient();
+    const { error } = await supabase.from("scores").insert({ game_id: game.id, name, score });
+    if (!error) setSaved(true);
   };
 
   return (
