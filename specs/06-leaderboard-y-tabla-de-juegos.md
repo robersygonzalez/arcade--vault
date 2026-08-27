@@ -1,6 +1,6 @@
 # SPEC 06 — Leaderboard real y tabla de juegos en Supabase
 
-> **Status:** Draft
+> **Status:** Aprobado
 > **Depends on:** SPEC 04 (integracion-supabase), SPEC 05 (juego-asteroides-real)
 > **Date:** 2026-08-27
 > **Objective:** Reemplazar los datos 100% mock de la Biblioteca y el Salón de la Fama por dos tablas reales en Supabase (`games` y `scores`), de forma que `game-player.tsx` guarde cada puntuación de verdad y las páginas de Biblioteca, detalle de juego y Salón de la Fama lean esos datos reales en vez de `GAMES`/`seededScores()`.
