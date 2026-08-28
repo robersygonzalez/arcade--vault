@@ -1,6 +1,6 @@
 # SPEC 07 — Juego real de Tetris
 
-> **Status:** Draft
+> **Status:** Aprobado
 > **Depends on:** SPEC 05, SPEC 06
 > **Date:** 2026-08-28
 > **Objective:** Portar el Tetris vanilla de `references/started-games/03-tetris/` a un nuevo juego real y jugable (`tetris`) en Arcade Vault, con su fila en `games`, su leaderboard en `scores`, y — al ser el segundo juego real de la plataforma — introducir el registry de juegos reales y el HUD flexible por slots que reemplazan el `isAsteroids` hardcodeado de `components/game-player.tsx`.
