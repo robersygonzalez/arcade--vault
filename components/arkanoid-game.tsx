@@ -231,10 +231,11 @@ const ArkanoidGame = forwardRef<RealGameHandle, RealGameProps>(function Arkanoid
   );
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const context = canvas.getContext("2d");
+    const canvasEl = canvasRef.current;
+    if (!canvasEl) return;
+    const context = canvasEl.getContext("2d");
     if (!context) return;
+    const canvas = canvasEl;
     const ctx = context;
 
     // ── Estado mutable ───────────────────────────────────────────────────────
