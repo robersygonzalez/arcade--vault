@@ -1,6 +1,6 @@
 # SPEC 08 — Juego real de Arkanoid
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 05, SPEC 06, SPEC 07
 > **Date:** 2026-08-29
 > **Objective:** Portar el Arkanoid vanilla de `references/started-games/04-arkanoid/` a un nuevo juego real y jugable (`arkanoid`) en Arcade Vault, con su fila en `games`, su leaderboard en `scores`, y su componente de canvas, reusando el registry de juegos reales y el HUD de slots ya introducidos por SPEC 07.
