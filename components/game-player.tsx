@@ -5,45 +5,53 @@ import { useRouter } from "next/navigation";
 import type { Game } from "@/app/data/games";
 import { useUser } from "@/components/user-context";
 import { createClient } from "@/utils/supabase/client";
-import AsteroidsGame, { type AsteroidsGameHandle } from "@/components/asteroids-game";
+import { REAL_GAMES, type RealGameHandle, type HudSlot } from "@/components/games/registry";
 
 export default function GamePlayer({ game }: { game: Game }) {
   const router = useRouter();
   const { user } = useUser();
-  const isAsteroids = game.id === "asteroides";
-  const gameRef = useRef<AsteroidsGameHandle>(null);
+  const RealGame = REAL_GAMES[game.id];
+  const gameRef = useRef<RealGameHandle>(null);
   const [score, setScore] = useState(0);
-  const [lives, setLives] = useState(3);
   const [level, setLevel] = useState(1);
+  const [slots, setSlots] = useState<HudSlot[]>([]);
   const [paused, setPaused] = useState(false);
   const [over, setOver] = useState(false);
   const [name, setName] = useState(user ? user.name : "INVITADO");
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (isAsteroids || over || paused) return;
+    if (RealGame || over || paused) return;
     const t = setInterval(() => setScore((s) => s + Math.floor(10 + Math.random() * 90)), 220);
     return () => clearInterval(t);
-  }, [isAsteroids, over, paused]);
+  }, [RealGame, over, paused]);
 
   useEffect(() => {
-    if (isAsteroids) return;
+    if (RealGame) return;
     if (score > 0 && score % 2500 < 100) setLevel((l) => l + 1);
-  }, [isAsteroids, score]);
+  }, [RealGame, score]);
+
+  useEffect(() => {
+    if (RealGame) return;
+    setSlots([
+      { label: "Vidas", value: "♥ ♥ ♥" },
+      { label: "Nivel", value: String(level).padStart(2, "0") },
+    ]);
+  }, [RealGame, level]);
 
   const togglePause = () => {
-    if (isAsteroids) gameRef.current?.togglePause();
+    if (RealGame) gameRef.current?.togglePause();
     setPaused((p) => !p);
   };
   const endGame = () => {
-    if (isAsteroids) {
+    if (RealGame) {
       gameRef.current?.forceGameOver();
       return;
     }
     setOver(true);
   };
   const restart = () => {
-    if (isAsteroids) {
+    if (RealGame) {
       gameRef.current?.restart();
       setPaused(false);
       setOver(false);
@@ -51,7 +59,6 @@ export default function GamePlayer({ game }: { game: Game }) {
       return;
     }
     setScore(0);
-    setLives(3);
     setLevel(1);
     setPaused(false);
     setOver(false);
@@ -78,14 +85,12 @@ export default function GamePlayer({ game }: { game: Game }) {
             <div className="l">Puntuación</div>
             <div className="v">{score.toLocaleString("es-ES")}</div>
           </div>
-          <div className="hud-stat lives">
-            <div className="l">Vidas</div>
-            <div className="v">{"♥ ".repeat(lives).trim() || "—"}</div>
-          </div>
-          <div className="hud-stat level">
-            <div className="l">Nivel</div>
-            <div className="v">{String(level).padStart(2, "0")}</div>
-          </div>
+          {slots.map((slot) => (
+            <div className="hud-stat" key={slot.label}>
+              <div className="l">{slot.label}</div>
+              <div className="v">{slot.value}</div>
+            </div>
+          ))}
         </div>
         <div className="hud-actions">
           <button className="btn yellow" onClick={togglePause}>
@@ -102,13 +107,12 @@ export default function GamePlayer({ game }: { game: Game }) {
 
       <div className="crt">
         <div className="crt-screen">
-          {isAsteroids ? (
-            <AsteroidsGame
+          {RealGame ? (
+            <RealGame
               ref={gameRef}
               onStatsChange={(stats) => {
                 setScore(stats.score);
-                setLives(stats.lives);
-                setLevel(stats.level);
+                setSlots(stats.slots);
               }}
               onGameOver={() => setOver(true)}
             />
