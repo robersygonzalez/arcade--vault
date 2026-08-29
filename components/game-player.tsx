@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import type { Game } from "@/app/data/games";
 import { useUser } from "@/components/user-context";
 import { createClient } from "@/utils/supabase/client";
-import AsteroidsGame, { type AsteroidsGameHandle } from "@/components/asteroids-game";
+import { REAL_GAMES, type RealGameHandle } from "@/components/games/registry";
 
 export default function GamePlayer({ game }: { game: Game }) {
   const router = useRouter();
   const { user } = useUser();
-  const isAsteroids = game.id === "asteroides";
-  const gameRef = useRef<AsteroidsGameHandle>(null);
+  const RealGame = REAL_GAMES[game.id];
+  const gameRef = useRef<RealGameHandle>(null);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [level, setLevel] = useState(1);
@@ -21,29 +21,29 @@ export default function GamePlayer({ game }: { game: Game }) {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (isAsteroids || over || paused) return;
+    if (RealGame || over || paused) return;
     const t = setInterval(() => setScore((s) => s + Math.floor(10 + Math.random() * 90)), 220);
     return () => clearInterval(t);
-  }, [isAsteroids, over, paused]);
+  }, [RealGame, over, paused]);
 
   useEffect(() => {
-    if (isAsteroids) return;
+    if (RealGame) return;
     if (score > 0 && score % 2500 < 100) setLevel((l) => l + 1);
-  }, [isAsteroids, score]);
+  }, [RealGame, score]);
 
   const togglePause = () => {
-    if (isAsteroids) gameRef.current?.togglePause();
+    if (RealGame) gameRef.current?.togglePause();
     setPaused((p) => !p);
   };
   const endGame = () => {
-    if (isAsteroids) {
+    if (RealGame) {
       gameRef.current?.forceGameOver();
       return;
     }
     setOver(true);
   };
   const restart = () => {
-    if (isAsteroids) {
+    if (RealGame) {
       gameRef.current?.restart();
       setPaused(false);
       setOver(false);
@@ -102,13 +102,12 @@ export default function GamePlayer({ game }: { game: Game }) {
 
       <div className="crt">
         <div className="crt-screen">
-          {isAsteroids ? (
-            <AsteroidsGame
+          {RealGame ? (
+            <RealGame
               ref={gameRef}
               onStatsChange={(stats) => {
                 setScore(stats.score);
-                setLives(stats.lives);
-                setLevel(stats.level);
+                setSlots(stats.slots);
               }}
               onGameOver={() => setOver(true)}
             />
