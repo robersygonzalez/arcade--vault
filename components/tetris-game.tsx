@@ -101,12 +101,16 @@ const TetrisGame = forwardRef<RealGameHandle, RealGameProps>(function TetrisGame
   );
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const nextCanvas = nextCanvasRef.current;
-    if (!canvas || !nextCanvas) return;
-    const ctx = canvas.getContext("2d");
-    const nextCtx = nextCanvas.getContext("2d");
-    if (!ctx || !nextCtx) return;
+    const canvasEl = canvasRef.current;
+    const nextCanvasEl = nextCanvasRef.current;
+    if (!canvasEl || !nextCanvasEl) return;
+    const context = canvasEl.getContext("2d");
+    const nextContext = nextCanvasEl.getContext("2d");
+    if (!context || !nextContext) return;
+    const canvas = canvasEl;
+    const nextCanvas = nextCanvasEl;
+    const ctx = context;
+    const nextCtx = nextContext;
 
     // ── Estado mutable ───────────────────────────────────────────────────────
     let board: number[][] = [];

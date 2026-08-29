@@ -1,6 +1,6 @@
 # SPEC 07 — Juego real de Tetris
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 05, SPEC 06
 > **Date:** 2026-08-28
 > **Objective:** Portar el Tetris vanilla de `references/started-games/03-tetris/` a un nuevo juego real y jugable (`tetris`) en Arcade Vault, con su fila en `games`, su leaderboard en `scores`, y — al ser el segundo juego real de la plataforma — introducir el registry de juegos reales y el HUD flexible por slots que reemplazan el `isAsteroids` hardcodeado de `components/game-player.tsx`.
@@ -285,24 +285,24 @@ No se agregan estructuras de persistencia nuevas: `scores` recibe filas con `gam
 
 ## Acceptance criteria
 
-- [ ] `npm run build` termina sin errores.
-- [ ] `/games` muestra la card "TETRIS" con el cover `cover-tetro`, categoría PUZZLE.
-- [ ] `/juegos/tetris` muestra el detalle correcto y no revienta con `notFound()`.
-- [ ] `/juegos/tetris/jugar` carga el canvas real del tablero (300×600, letterboxed dentro de `.crt-screen` sin deformarse) y el preview de la pieza siguiente superpuesto en la esquina.
-- [ ] El HUD de React muestra Puntuación, Líneas y Nivel sincronizados con el juego real; no muestra un slot de "Vidas" para Tetris.
-- [ ] `ArrowLeft`/`ArrowRight` mueven la pieza, `ArrowUp` (o `X`) rota con wall-kicks, `ArrowDown` hace caída suave, `Space` hace caída instantánea; ninguna de esas teclas scrollea la página.
-- [ ] Completar una línea la elimina, suma puntos según `LINE_SCORES[cantidad] * nivel`, y sube `lines`/`level` en el HUD cuando corresponde.
-- [ ] La pieza fantasma se ve semitransparente en la posición donde caería la pieza actual.
-- [ ] La velocidad de caída aumenta al subir de nivel.
-- [ ] PAUSA congela el tablero (nada se mueve, incluida la caída automática); REANUDAR continúa exactamente donde quedó.
-- [ ] FIN fuerza el fin de partida y abre el modal "FIN DEL JUEGO" con la puntuación real.
-- [ ] Que una pieza nueva no quepa (top-out) también abre el mismo modal automáticamente, sin pulsar FIN.
-- [ ] Guardar la puntuación desde el modal inserta una fila en `scores` con `game_id: "tetris"` (verificable con una query a la tabla).
-- [ ] El aside "MEJORES PUNTUACIONES" de `/juegos/tetris` y las tabs de `/salon-de-la-fama` muestran esa puntuación tras guardarla.
-- [ ] "JUGAR DE NUEVO" reinicia el tablero real desde cero (score 0, líneas 0, nivel 1) dentro de la misma pantalla.
-- [ ] "SALIR" navega a `/juegos/tetris` sin dejar el loop corriendo ni listeners de teclado activos (sin warnings de React en consola por actualizar estado tras desmontar).
-- [ ] Asteroids (`/juegos/asteroides/jugar`) sigue funcionando exactamente igual tras la migración al registry y al HUD de slots — mismo HUD visual (Puntuación/Vidas/Nivel), mismo comportamiento de pausa/fin/reinicio.
-- [ ] El resto de los juegos decorativos siguen mostrando el reproductor decorativo sin cambios, con el mismo HUD fijo de Vidas/Nivel que tenían antes.
+- [x] `npm run build` termina sin errores.
+- [x] `/games` muestra la card "TETRIS" con el cover `cover-tetro`, categoría PUZZLE.
+- [x] `/juegos/tetris` muestra el detalle correcto y no revienta con `notFound()`.
+- [x] `/juegos/tetris/jugar` carga el canvas real del tablero (300×600, letterboxed dentro de `.crt-screen` sin deformarse) y el preview de la pieza siguiente superpuesto en la esquina.
+- [x] El HUD de React muestra Puntuación, Líneas y Nivel sincronizados con el juego real; no muestra un slot de "Vidas" para Tetris.
+- [x] `ArrowLeft`/`ArrowRight` mueven la pieza, `ArrowUp` (o `X`) rota con wall-kicks, `ArrowDown` hace caída suave, `Space` hace caída instantánea; ninguna de esas teclas scrollea la página.
+- [x] Completar una línea la elimina, suma puntos según `LINE_SCORES[cantidad] * nivel`, y sube `lines`/`level` en el HUD cuando corresponde.
+- [x] La pieza fantasma se ve semitransparente en la posición donde caería la pieza actual.
+- [x] La velocidad de caída aumenta al subir de nivel.
+- [x] PAUSA congela el tablero (nada se mueve, incluida la caída automática); REANUDAR continúa exactamente donde quedó.
+- [x] FIN fuerza el fin de partida y abre el modal "FIN DEL JUEGO" con la puntuación real.
+- [x] Que una pieza nueva no quepa (top-out) también abre el mismo modal automáticamente, sin pulsar FIN.
+- [x] Guardar la puntuación desde el modal inserta una fila en `scores` con `game_id: "tetris"` (verificable con una query a la tabla).
+- [x] El aside "MEJORES PUNTUACIONES" de `/juegos/tetris` y las tabs de `/salon-de-la-fama` muestran esa puntuación tras guardarla.
+- [x] "JUGAR DE NUEVO" reinicia el tablero real desde cero (score 0, líneas 0, nivel 1) dentro de la misma pantalla.
+- [x] "SALIR" navega a `/juegos/tetris` sin dejar el loop corriendo ni listeners de teclado activos (sin warnings de React en consola por actualizar estado tras desmontar).
+- [x] Asteroids (`/juegos/asteroides/jugar`) sigue funcionando exactamente igual tras la migración al registry y al HUD de slots — mismo HUD visual (Puntuación/Vidas/Nivel), mismo comportamiento de pausa/fin/reinicio.
+- [x] El resto de los juegos decorativos siguen mostrando el reproductor decorativo sin cambios, con el mismo HUD fijo de Vidas/Nivel que tenían antes.
 
 ## Decisions
 
