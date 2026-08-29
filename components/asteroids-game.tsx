@@ -1,19 +1,11 @@
 "use client";
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import type { RealGameHandle, RealGameProps } from "@/components/games/registry";
 
-export type AsteroidsGameHandle = {
-  togglePause: () => void;
-  forceGameOver: () => void;
-  restart: () => void;
-};
+export type AsteroidsGameHandle = RealGameHandle;
 
-type AsteroidsGameProps = {
-  onStatsChange: (stats: { score: number; lives: number; level: number }) => void;
-  onGameOver: (finalScore: number) => void;
-};
-
-const AsteroidsGame = forwardRef<AsteroidsGameHandle, AsteroidsGameProps>(function AsteroidsGame(
+const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function AsteroidsGame(
   { onStatsChange, onGameOver },
   ref,
 ) {
@@ -567,7 +559,13 @@ const AsteroidsGame = forwardRef<AsteroidsGameHandle, AsteroidsGameProps>(functi
         lastScore = score;
         lastLives = lives;
         lastLevel = level;
-        onStatsChangeRef.current({ score, lives, level });
+        onStatsChangeRef.current({
+          score,
+          slots: [
+            { label: "Vidas", value: "♥ ".repeat(lives).trim() || "—" },
+            { label: "Nivel", value: String(level).padStart(2, "0") },
+          ],
+        });
       }
       if (state === "gameover" && !gameOverFired) {
         gameOverFired = true;
