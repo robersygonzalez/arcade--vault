@@ -1,6 +1,7 @@
 import type { ComponentType, RefAttributes } from "react";
 import AsteroidsGame from "@/components/asteroids-game";
 import TetrisGame from "@/components/tetris-game";
+import ArkanoidGame from "@/components/arkanoid-game";
 
 export type HudSlot = { label: string; value: string };
 export type GameStats = { score: number; slots: HudSlot[] };
@@ -22,4 +23,5 @@ export const REAL_GAMES: Record<
 > = {
   asteroides: AsteroidsGame,
   tetris: TetrisGame,
+  arkanoid: ArkanoidGame,
 };
