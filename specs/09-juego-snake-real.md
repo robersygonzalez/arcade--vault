@@ -1,6 +1,6 @@
 # SPEC 09 — Snake real y jugable
 
-> **Status:** Implementado
+> **Status:** Aprobado
 > **Depends on:** SPEC 05, SPEC 06
 > **Date:** 2026-08-29
 > **Objective:** Implementar Snake como juego real y jugable (`snake`) en Arcade Vault, con su fila en `games`, su leaderboard en `scores`, sprites de frutas propios, y su entrada en el registry de juegos reales ya existente (`components/games/registry.ts`).
