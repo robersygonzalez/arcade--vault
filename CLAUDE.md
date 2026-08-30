@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 @AGENTS.md
 
-## Product
+## Product overviews
 
 **Arcade Vault**: an online platform for playing games and competing for the highest score
 (per README.md: "una plataforma para jugar online y competir por la mayor cantidad de puntos").
