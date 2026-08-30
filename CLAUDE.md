@@ -29,6 +29,12 @@ Slash commands (installed as project skills under `.claude/skills/`, mirrored un
 
 Originally sourced from `Klerith/fernando-skills`; `add-game` is a local extension on top of it.
 
+Before `/add-game`, the `game-planner` subagent (`.claude/agents/game-planner.md`) decides _what_
+game to add next: it reads the platform state (registry, `implemented-games.md`, the live `games`
+table) and ranks candidates against the platform's constraints. It persists every suggestion —
+pending, implemented, discarded — in `references/game-suggestions-todo.md`, its project-level memory,
+so it never re-proposes something already considered. Flow: `game-planner` → `/add-game` → `/spec-impl`.
+
 ## Read the bundled Next.js docs before writing code
 
 This project runs **Next.js 16.3.1** with **React 19.2** — recent enough that training data is likely stale or wrong.
@@ -44,6 +50,8 @@ check `node_modules/next/dist/docs/01-app/` for the current API. Notably:
 ## Skills
 
 - Usa siempre `/frontend-design` cuando quieras hacer diseños de interfaces de usuario.
+- Usa el agente `game-planner` para decidir qué juego añadir a continuación, antes de `/add-game`
+  (ver "Required workflow" arriba).
 - Usa `/add-game` para diseñar el spec de un juego real nuevo (ver "Required workflow" arriba).
 - `.claude/hooks/format-and-lint.mjs` corre automáticamente (Prettier + ESLint) después de cada `Write`/`Edit` — ver `.claude/settings.json`.
 
@@ -98,6 +106,8 @@ and `.btn.yellow` have button variants today — `cyan`/`green` fall back to the
 **References** (`references/`): `started-games/` holds the vanilla JS sources games get ported from
 (`02-asteroids`, `03-tetris`, `04-arkanoid`), `source-assets/` holds raw sprite/asset sources not yet
 moved into `public/`, `templates/` holds the original static HTML/JSX mockups the early specs migrated
-from — useful for design reference, not live code.
+from — useful for design reference, not live code. `game-suggestions-todo.md` is the `game-planner`
+subagent's persistent memory of every game it has suggested, implemented, or discarded (see
+"Required workflow" above).
 
 See "Required workflow" above for how feature work should be planned before writing code.
