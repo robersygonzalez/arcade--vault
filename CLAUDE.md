@@ -82,6 +82,8 @@ type RealGameProps = { onStatsChange; onGameOver };
 ```
 
 Currently registered: `asteroides`, `tetris`, `arkanoid`, `snake` (`components/{asteroids,tetris,arkanoid,snake}-game.tsx`).
+**`references/implemented-games.md` is the source of truth for this list (id, título, categoría,
+descripción, color) — update it every time a game is added to or removed from `REAL_GAMES`.**
 `game-player.tsx` renders `REAL_GAMES[game.id]` inside `.crt-screen` if present, otherwise falls back to
 a decorative fake-score simulation — several other catalog entries (e.g. `bloque-buster`, `serpentina`)
 are still decorative-only by design, coexisting with their "real" counterpart under a different id.
