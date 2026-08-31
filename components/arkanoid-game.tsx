@@ -548,7 +548,10 @@ const ArkanoidGame = forwardRef<RealGameHandle, RealGameProps>(function Arkanoid
   }, []);
 
   return (
-    <canvas ref={canvasRef} width={800} height={600} style={{ width: "100%", height: "100%" }} />
+    <div style={{ position: "relative", width: "100%", height: "100%" }}>
+      <canvas ref={canvasRef} width={800} height={600} style={{ width: "100%", height: "100%" }} />
+      <SkinSwitcher gameId="arkanoid" skin={skin} onChange={setSkin} />
+    </div>
   );
 });
 
