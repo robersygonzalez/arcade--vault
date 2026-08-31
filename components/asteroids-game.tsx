@@ -2,6 +2,7 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import type { RealGameHandle, RealGameProps } from "@/components/games/registry";
+import { ASTEROIDS_SKINS, SkinSwitcher, useGameSkin } from "@/components/games/skins";
 
 export type AsteroidsGameHandle = RealGameHandle;
 
@@ -12,6 +13,8 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const onStatsChangeRef = useRef(onStatsChange);
   const onGameOverRef = useRef(onGameOver);
+  const [skin, setSkin] = useGameSkin("asteroides");
+  const skinRef = useRef(ASTEROIDS_SKINS[skin]);
   const actionsRef = useRef<AsteroidsGameHandle>({
     togglePause: () => {},
     forceGameOver: () => {},
@@ -25,6 +28,10 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
   useEffect(() => {
     onGameOverRef.current = onGameOver;
   }, [onGameOver]);
+
+  useEffect(() => {
+    skinRef.current = ASTEROIDS_SKINS[skin];
+  }, [skin]);
 
   useImperativeHandle(
     ref,
@@ -110,10 +117,15 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
       }
 
       draw() {
-        c.fillStyle = "#fff";
+        c.fillStyle = skinRef.current.bullet;
+        if (skinRef.current.glowBlur > 0) {
+          c.shadowBlur = skinRef.current.glowBlur;
+          c.shadowColor = skinRef.current.bullet;
+        }
         c.beginPath();
         c.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         c.fill();
+        c.shadowBlur = 0;
       }
     }
 
@@ -175,14 +187,19 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
         c.save();
         c.translate(this.x, this.y);
         c.rotate(this.rot);
-        c.strokeStyle = "#fff";
+        c.strokeStyle = skinRef.current.asteroid;
         c.lineWidth = 1.5;
         c.lineJoin = "round";
+        if (skinRef.current.glowBlur > 0) {
+          c.shadowBlur = skinRef.current.glowBlur;
+          c.shadowColor = skinRef.current.asteroid;
+        }
         c.beginPath();
         c.moveTo(this.verts[0][0], this.verts[0][1]);
         for (let i = 1; i < this.verts.length; i++) c.lineTo(this.verts[i][0], this.verts[i][1]);
         c.closePath();
         c.stroke();
+        c.shadowBlur = 0;
         c.restore();
       }
     }
@@ -222,16 +239,26 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
         c.save();
         c.translate(this.x, this.y);
         c.rotate(Math.PI / 4);
-        c.strokeStyle = "#0ff";
+        c.strokeStyle = skinRef.current.powerUp;
         c.lineWidth = 2;
+        if (skinRef.current.glowBlur > 0) {
+          c.shadowBlur = skinRef.current.glowBlur;
+          c.shadowColor = skinRef.current.powerUp;
+        }
         const r = this.radius * pulse;
         c.strokeRect(-r, -r, r * 2, r * 2);
+        c.shadowBlur = 0;
         c.restore();
-        c.fillStyle = "#0ff";
+        c.fillStyle = skinRef.current.powerUp;
         c.font = "bold 12px monospace";
         c.textAlign = "center";
         c.textBaseline = "middle";
+        if (skinRef.current.glowBlur > 0) {
+          c.shadowBlur = skinRef.current.glowBlur;
+          c.shadowColor = skinRef.current.powerUp;
+        }
         c.fillText("3x", this.x, this.y);
+        c.shadowBlur = 0;
       }
     }
 
@@ -315,9 +342,13 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
         c.save();
         c.translate(this.x, this.y);
         c.rotate(this.angle);
-        c.strokeStyle = "#fff";
+        c.strokeStyle = skinRef.current.ship;
         c.lineWidth = 1.5;
         c.lineJoin = "round";
+        if (skinRef.current.glowBlur > 0) {
+          c.shadowBlur = skinRef.current.glowBlur;
+          c.shadowColor = skinRef.current.ship;
+        }
 
         c.beginPath();
         c.moveTo(20, 0);
@@ -326,13 +357,14 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
         c.lineTo(-12, 9);
         c.closePath();
         c.stroke();
+        c.shadowBlur = 0;
 
         if (this.thrusting && Math.random() > 0.35) {
           c.beginPath();
           c.moveTo(-8, -4);
           c.lineTo(-8 - rand(6, 14), 0);
           c.lineTo(-8, 4);
-          c.strokeStyle = "rgba(255, 130, 0, 0.85)";
+          c.strokeStyle = `rgba(${skinRef.current.shipThrustRgb}, 0.85)`;
           c.stroke();
         }
 
@@ -371,7 +403,7 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
 
       draw() {
         const alpha = this.ttl / this.life;
-        c.strokeStyle = `rgba(255,255,255,${alpha.toFixed(2)})`;
+        c.strokeStyle = `rgba(${skinRef.current.particleRgb},${alpha.toFixed(2)})`;
         c.lineWidth = 1;
         c.beginPath();
         c.moveTo(this.x, this.y);
@@ -529,14 +561,15 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
     function drawHUD() {
       if (ship.tripleShot > 0) {
         c.textAlign = "left";
-        c.fillStyle = "#0ff";
+        c.fillStyle = skinRef.current.hudAccent;
         c.font = "15px monospace";
         c.fillText(`3x  ${ship.tripleShot.toFixed(1)}s`, 14, 46);
       }
     }
 
     function draw() {
-      c.fillStyle = "#000";
+      c.shadowBlur = 0;
+      c.fillStyle = skinRef.current.background;
       c.fillRect(0, 0, W, H);
 
       particles.forEach((p) => p.draw());
@@ -617,7 +650,10 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
   }, []);
 
   return (
-    <canvas ref={canvasRef} width={800} height={600} style={{ width: "100%", height: "100%" }} />
+    <div style={{ position: "relative", width: "100%", height: "100%" }}>
+      <canvas ref={canvasRef} width={800} height={600} style={{ width: "100%", height: "100%" }} />
+      <SkinSwitcher gameId="asteroides" skin={skin} onChange={setSkin} />
+    </div>
   );
 });
 

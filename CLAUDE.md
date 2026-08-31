@@ -29,6 +29,29 @@ Slash commands (installed as project skills under `.claude/skills/`, mirrored un
 
 Originally sourced from `Klerith/fernando-skills`; `add-game` is a local extension on top of it.
 
+Before `/add-game`, the `game-planner` subagent (`.claude/agents/game-planner.md`) decides _what_
+game to add next: it reads the platform state (registry, `implemented-games.md`, the live `games`
+table) and ranks candidates against the platform's constraints. It persists every suggestion —
+pending, implemented, discarded — in `references/game-suggestions-todo.md`, its project-level memory,
+so it never re-proposes something already considered. Flow: `game-planner` → `/add-game` → `/spec-impl`.
+
+A parallel track starts from a free-form theme instead of the catalog's category gaps: the
+`game-jam` subagent (`.claude/agents/game-jam.md`) takes a theme (e.g. "horror", "cooking"), asks
+clarifying questions in blocks, and writes **2 specs** straight to
+`specs/game-jam/<game-id>/01-<slug>-base.md` (playable end to end) and `02-<slug>-fase-2.md`
+(a layer on top — levels, power-ups, difficulty), numbered locally per folder, outside the global
+`specs/` sequence. It reads `game-planner`'s memory to avoid repeating an already-considered game,
+but never writes to it. Flow: `game-jam` → `/spec-impl specs/game-jam/<slug>/01-<slug>-base.md`.
+
+A third, orthogonal track retrofits visual skins onto an already-implemented game: the
+`skin-designer` subagent (`.claude/agents/skin-designer.md`) designs the 3 mandatory skins —
+`clasico` (default, frozen to the game's current look), `neon`, and `retro` — for **one game per
+invocation**, whichever one the user names; it never processes the whole catalog at once. It
+validates contrast against the CRT's black background and writes `specs/NN-skins-<slug>.md`. Its
+memory is `references/game-with-themes.md`, which also tracks whether the shared
+`components/games/skins.ts` infrastructure has been created yet (paid for by the first game that
+gets skinned). Flow: `skin-designer <game>` → `/spec-impl specs/NN-skins-<slug>.md`.
+
 ## Read the bundled Next.js docs before writing code
 
 This project runs **Next.js 16.3.1** with **React 19.2** — recent enough that training data is likely stale or wrong.
@@ -44,13 +67,20 @@ check `node_modules/next/dist/docs/01-app/` for the current API. Notably:
 ## Skills
 
 - Usa siempre `/frontend-design` cuando quieras hacer diseños de interfaces de usuario.
+- Usa el agente `game-planner` para decidir qué juego añadir a continuación, antes de `/add-game`
+  (ver "Required workflow" arriba).
 - Usa `/add-game` para diseñar el spec de un juego real nuevo (ver "Required workflow" arriba).
+- Usa el agente `game-jam` cuando quieras partir de un tema libre (no de un hueco del catálogo) y
+  obtener 2 specs listos en `specs/game-jam/<game-id>/` (ver "Required workflow" arriba).
+- Usa el agente `skin-designer <juego>` para diseñar los 3 skins obligatorios (clasico/neon/retro)
+  de un juego ya implementado, uno por invocación (ver "Required workflow" arriba).
 - `.claude/hooks/format-and-lint.mjs` corre automáticamente (Prettier + ESLint) después de cada `Write`/`Edit` — ver `.claude/settings.json`.
 
 ## Architecture
 
-App Router, TypeScript, Tailwind CSS v4 (`app/globals.css`, `@import "tailwindcss"` + `@theme inline`,
-no `tailwind.config.js`). Path alias `@/*` → repo root.
+App Router, TypeScript, Tailwind CSS v4 (`app/globals.css`, `@import "tailwindcss"`; design tokens
+live in a plain `:root` block, not `@theme inline` — no `tailwind.config.js`). Path alias `@/*` →
+repo root.
 
 **Routes** (`app/`):
 
@@ -98,6 +128,9 @@ and `.btn.yellow` have button variants today — `cyan`/`green` fall back to the
 **References** (`references/`): `started-games/` holds the vanilla JS sources games get ported from
 (`02-asteroids`, `03-tetris`, `04-arkanoid`), `source-assets/` holds raw sprite/asset sources not yet
 moved into `public/`, `templates/` holds the original static HTML/JSX mockups the early specs migrated
-from — useful for design reference, not live code.
+from — useful for design reference, not live code. `game-suggestions-todo.md` is the `game-planner`
+subagent's persistent memory of every game it has suggested, implemented, or discarded, and
+`game-with-themes.md` is the `skin-designer` subagent's registry of which games already have their 3
+skins and whether the shared skin infrastructure exists yet (see "Required workflow" above).
 
 See "Required workflow" above for how feature work should be planned before writing code.
