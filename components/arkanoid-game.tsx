@@ -2,6 +2,7 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import type { RealGameHandle, RealGameProps } from "@/components/games/registry";
+import { ARKANOID_SKINS } from "@/components/games/skins";
 import type { ArkanoidBlockColorName, ArkanoidTint, SkinId } from "@/components/games/skins";
 
 const W = 800;
@@ -136,22 +137,25 @@ function loadSpritesheet(cb: () => void) {
     return;
   }
   ssCallbacks.push(cb);
-  if (ssImg) return;
+  if (rawImg) return;
 
-  const rawImg = new Image();
-  rawImg.onload = () => {
+  const img = new Image();
+  img.onload = () => {
     const oc = document.createElement("canvas");
-    oc.width = rawImg.width;
-    oc.height = rawImg.height;
+    oc.width = img.width;
+    oc.height = img.height;
     const octx = oc.getContext("2d");
     if (!octx) return;
-    octx.drawImage(rawImg, 0, 0);
-    ssImg = oc;
+    octx.drawImage(img, 0, 0);
+    rawImg = oc;
+    tintedCache.set("clasico", rawImg);
+    tintedCache.set("neon", buildTintedCopy(rawImg, ARKANOID_SKINS.neon.tint!));
+    tintedCache.set("retro", buildTintedCopy(rawImg, ARKANOID_SKINS.retro.tint!));
     ssLoaded = true;
     ssCallbacks.forEach((f) => f());
   };
-  rawImg.onerror = () => console.error("Failed to load spritesheet");
-  rawImg.src = "/arkanoid/spritesheet-breakout.png";
+  img.onerror = () => console.error("Failed to load spritesheet");
+  img.src = "/arkanoid/spritesheet-breakout.png";
 }
 
 function drawFrame(
