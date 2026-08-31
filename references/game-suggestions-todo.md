@@ -59,6 +59,9 @@ Formato de una entrada:
 - [ ] **SERPENTINA** — ARCADE · green · cover existente `cover-snake` (id ya reservado `serpentina`)
       2026-08-30 · Fila decorativa sin gemelo real: coste de id/cover cero, pero es el mismo concepto que Snake ya implementado — redundancia máxima de las 20 candidatas, última prioridad.
 
+- [ ] **FROGGER** — ARCADE · green · cover nuevo `.cover-frogger` (id propuesto `frogger`)
+      2026-08-31 · Cruzar carriles de tráfico y río saltando entre obstáculos, típico Frogger. Equivalente/duplicado conceptual de `RANARIA` ya pendiente (mismo cruce de rana); pedido explícito por nombre, se deja trazado por separado.
+
 ## Implementados
 
 - [x] **ASTEROIDES** — SHOOTER · spec 05 · 2026-08-27

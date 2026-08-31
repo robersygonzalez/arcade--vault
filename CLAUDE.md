@@ -35,6 +35,14 @@ table) and ranks candidates against the platform's constraints. It persists ever
 pending, implemented, discarded — in `references/game-suggestions-todo.md`, its project-level memory,
 so it never re-proposes something already considered. Flow: `game-planner` → `/add-game` → `/spec-impl`.
 
+A parallel track starts from a free-form theme instead of the catalog's category gaps: the
+`game-jam` subagent (`.claude/agents/game-jam.md`) takes a theme (e.g. "horror", "cooking"), asks
+clarifying questions in blocks, and writes **2 specs** straight to
+`specs/game-jam/<game-id>/01-<slug>-base.md` (playable end to end) and `02-<slug>-fase-2.md`
+(a layer on top — levels, power-ups, difficulty), numbered locally per folder, outside the global
+`specs/` sequence. It reads `game-planner`'s memory to avoid repeating an already-considered game,
+but never writes to it. Flow: `game-jam` → `/spec-impl specs/game-jam/<slug>/01-<slug>-base.md`.
+
 ## Read the bundled Next.js docs before writing code
 
 This project runs **Next.js 16.3.1** with **React 19.2** — recent enough that training data is likely stale or wrong.
@@ -53,6 +61,8 @@ check `node_modules/next/dist/docs/01-app/` for the current API. Notably:
 - Usa el agente `game-planner` para decidir qué juego añadir a continuación, antes de `/add-game`
   (ver "Required workflow" arriba).
 - Usa `/add-game` para diseñar el spec de un juego real nuevo (ver "Required workflow" arriba).
+- Usa el agente `game-jam` cuando quieras partir de un tema libre (no de un hueco del catálogo) y
+  obtener 2 specs listos en `specs/game-jam/<game-id>/` (ver "Required workflow" arriba).
 - `.claude/hooks/format-and-lint.mjs` corre automáticamente (Prettier + ESLint) después de cada `Write`/`Edit` — ver `.claude/settings.json`.
 
 ## Architecture
