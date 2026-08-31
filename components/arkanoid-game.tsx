@@ -160,25 +160,27 @@ function loadSpritesheet(cb: () => void) {
 
 function drawFrame(
   ctx: CanvasRenderingContext2D,
+  img: HTMLCanvasElement | null,
   frame: SpriteFrame,
   x: number,
   y: number,
   w: number,
   h: number,
 ) {
-  if (!ssLoaded || !ssImg) return;
-  ctx.drawImage(ssImg, frame.sx, frame.sy, frame.sw, frame.sh, x, y, w, h);
+  if (!ssLoaded || !img) return;
+  ctx.drawImage(img, frame.sx, frame.sy, frame.sw, frame.sh, x, y, w, h);
 }
 
 function drawSprite(
   ctx: CanvasRenderingContext2D,
+  img: HTMLCanvasElement | null,
   name: string,
   x: number,
   y: number,
   w: number,
   h: number,
 ) {
-  if (!ssLoaded || !ssImg) return;
+  if (!ssLoaded || !img) return;
   let sp: SpriteFrame | undefined;
   if (name.startsWith("block_")) {
     sp = SPRITES.blocks[name.slice(6)];
@@ -186,7 +188,7 @@ function drawSprite(
     sp = SPRITES[name];
   }
   if (!sp) return;
-  ctx.drawImage(ssImg, sp.sx, sp.sy, sp.sw, sp.sh, x, y, w, h);
+  ctx.drawImage(img, sp.sx, sp.sy, sp.sw, sp.sh, x, y, w, h);
 }
 
 const LEVELS: Level[] = (() => {
