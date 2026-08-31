@@ -1,6 +1,6 @@
 # SPEC 12 — Skins de Arkanoid (clásico / neón / retro)
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 08 (Arkanoid real), SPEC 10 (infraestructura compartida de skins, `components/games/skins.tsx`)
 > **Date:** 2026-08-31
 > **Objective:** Añadir la entrada de Arkanoid al mapa de paletas compartido y skinear `components/arkanoid-game.tsx` con los 3 skins obligatorios — `clasico`, `neon`, `retro` — tintando su spritesheet por skin.
@@ -256,27 +256,27 @@ skinRef.current.palette.glowBlur` y `ctx.shadowColor = skinRef.current.palette.t
 
 ## Acceptance criteria
 
-- [ ] `npm run build` termina sin errores.
-- [ ] Con el skin `clasico` activo (default, sin tocar nada), Arkanoid se ve pixel-idéntico al estado
+- [x] `npm run build` termina sin errores.
+- [x] Con el skin `clasico` activo (default, sin tocar nada), Arkanoid se ve pixel-idéntico al estado
       actual antes de este spec (spritesheet sin tintar).
-- [ ] `<SkinSwitcher>` aparece como un pill en la esquina inferior derecha del canvas de Arkanoid, con
+- [x] `<SkinSwitcher>` aparece como un pill en la esquina inferior derecha del canvas de Arkanoid, con
       las 3 opciones `Clásico`/`Neón`/`Retro`, y no interfiere con el control de la pala por
       `mousemove` (mover el mouse sobre el pill no mueve la pala).
-- [ ] Elegir `neon` cambia el fondo a `#05050b`, tiñe pala/pelota de cian (`#00f5ff`) con halo visible,
+- [x] Elegir `neon` cambia el fondo a `#05050b`, tiñe pala/pelota de cian (`#00f5ff`) con halo visible,
       y tiñe los bloques según `blockColors` (amarillo, cian, magenta o verde según su nombre
       original), sin perder la forma de cada sprite.
-- [ ] Elegir `retro` cambia el fondo a `#140d00`, tiñe pala/pelota/bloques solo con tonos ámbar de la
+- [x] Elegir `retro` cambia el fondo a `#140d00`, tiñe pala/pelota/bloques solo con tonos ámbar de la
       rampa (`#ffb000`, `#cc8800`, `#996600`), sin halo.
-- [ ] Un bloque `gray` y su animación de explosión se ven del mismo color entre sí en cualquier skin
+- [x] Un bloque `gray` y su animación de explosión se ven del mismo color entre sí en cualquier skin
       (restricción técnica documentada arriba).
-- [ ] Cambiar de skin en medio de una partida no reinicia la pala, la pelota, los bloques vivos, el
+- [x] Cambiar de skin en medio de una partida no reinicia la pala, la pelota, los bloques vivos, el
       score, las vidas ni el nivel — solo cambia el color en el siguiente frame.
-- [ ] Recargar la página después de elegir `neon` o `retro` conserva ese skin (persistencia en
+- [x] Recargar la página después de elegir `neon` o `retro` conserva ese skin (persistencia en
       `localStorage['av_skin_arkanoid']`), sin parpadeo de hidratación en consola.
-- [ ] Montar dos instancias de Arkanoid con distinto skin (o cambiar de skin, desmontar y volver a
+- [x] Montar dos instancias de Arkanoid con distinto skin (o cambiar de skin, desmontar y volver a
       montar) no filtra el tinte de una hacia la otra — cada montaje lee su propia entrada de
       `tintedCache`, construida una sola vez a partir del mismo `rawImg`.
-- [ ] Los demás juegos (Asteroids, Snake, Tetris) no cambian de aspecto ni de comportamiento — este
+- [x] Los demás juegos (Asteroids, Snake, Tetris) no cambian de aspecto ni de comportamiento — este
       spec no los toca.
 
 ## Decisions
