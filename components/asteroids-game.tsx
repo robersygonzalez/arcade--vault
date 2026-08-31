@@ -2,6 +2,7 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import type { RealGameHandle, RealGameProps } from "@/components/games/registry";
+import { ASTEROIDS_SKINS, SkinSwitcher, useGameSkin } from "@/components/games/skins";
 
 export type AsteroidsGameHandle = RealGameHandle;
 
@@ -12,6 +13,8 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const onStatsChangeRef = useRef(onStatsChange);
   const onGameOverRef = useRef(onGameOver);
+  const [skin, setSkin] = useGameSkin("asteroides");
+  const skinRef = useRef(ASTEROIDS_SKINS[skin]);
   const actionsRef = useRef<AsteroidsGameHandle>({
     togglePause: () => {},
     forceGameOver: () => {},
@@ -25,6 +28,10 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
   useEffect(() => {
     onGameOverRef.current = onGameOver;
   }, [onGameOver]);
+
+  useEffect(() => {
+    skinRef.current = ASTEROIDS_SKINS[skin];
+  }, [skin]);
 
   useImperativeHandle(
     ref,
