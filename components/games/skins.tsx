@@ -147,7 +147,65 @@ export const SNAKE_SKINS: Record<SkinId, SnakePalette> = {
   },
 };
 
+export type ArkanoidBlockColorName =
+  "gray" | "red" | "yellow" | "cyan" | "magenta" | "hotpink" | "green";
+
+export type ArkanoidTint = {
+  paddle: string;
+  ball: string;
+  blockColors: Record<ArkanoidBlockColorName, string>;
+};
+
+export type ArkanoidPalette = {
+  background: string;
+  glowBlur: number;
+  tint: ArkanoidTint | null;
+};
+
+export const ARKANOID_SKINS: Record<SkinId, ArkanoidPalette> = {
+  clasico: {
+    background: "#000000",
+    glowBlur: 0,
+    tint: null,
+  },
+  neon: {
+    background: "#05050b",
+    glowBlur: 10,
+    tint: {
+      paddle: "#00f5ff",
+      ball: "#00f5ff",
+      blockColors: {
+        gray: "#ff006e",
+        red: "#ff006e",
+        yellow: "#f5ff00",
+        cyan: "#00f5ff",
+        magenta: "#ff006e",
+        hotpink: "#ff006e",
+        green: "#00ff88",
+      },
+    },
+  },
+  retro: {
+    background: "#140d00",
+    glowBlur: 0,
+    tint: {
+      paddle: "#ffb000",
+      ball: "#ffb000",
+      blockColors: {
+        gray: "#ffb000",
+        red: "#ffb000",
+        yellow: "#cc8800",
+        cyan: "#996600",
+        magenta: "#ffb000",
+        hotpink: "#cc8800",
+        green: "#996600",
+      },
+    },
+  },
+};
+
 export const GAME_SKINS = {
   asteroides: ASTEROIDS_SKINS,
   snake: SNAKE_SKINS,
+  arkanoid: ARKANOID_SKINS,
 } as const;
