@@ -2,7 +2,7 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import type { RealGameHandle, RealGameProps } from "@/components/games/registry";
-import { ARKANOID_SKINS } from "@/components/games/skins";
+import { ARKANOID_SKINS, SkinSwitcher, useGameSkin } from "@/components/games/skins";
 import type { ArkanoidBlockColorName, ArkanoidTint, SkinId } from "@/components/games/skins";
 
 const W = 800;
@@ -255,6 +255,8 @@ const ArkanoidGame = forwardRef<RealGameHandle, RealGameProps>(function Arkanoid
     forceGameOver: () => {},
     restart: () => {},
   });
+  const [skin, setSkin] = useGameSkin("arkanoid");
+  const skinRef = useRef({ id: skin, palette: ARKANOID_SKINS[skin] });
 
   useEffect(() => {
     onStatsChangeRef.current = onStatsChange;
@@ -263,6 +265,10 @@ const ArkanoidGame = forwardRef<RealGameHandle, RealGameProps>(function Arkanoid
   useEffect(() => {
     onGameOverRef.current = onGameOver;
   }, [onGameOver]);
+
+  useEffect(() => {
+    skinRef.current = { id: skin, palette: ARKANOID_SKINS[skin] };
+  }, [skin]);
 
   useImperativeHandle(
     ref,
