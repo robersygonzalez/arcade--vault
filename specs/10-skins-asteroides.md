@@ -1,6 +1,6 @@
 # SPEC 10 — Skins de Asteroids (clásico / neón / retro) + infraestructura compartida
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 05 (Asteroids real)
 > **Date:** 2026-08-31
 > **Objective:** Crear la infraestructura compartida de skins (`components/games/skins.tsx`) y aplicar los 3 skins obligatorios — `clasico`, `neon`, `retro` — a `components/asteroids-game.tsx`.
@@ -264,20 +264,20 @@ width: "100%", height: "100%" }}>` que contenga el `<canvas>` existente sin camb
 
 ## Acceptance criteria
 
-- [ ] `npm run build` termina sin errores.
-- [ ] Con el skin `clasico` activo (default, sin tocar nada), Asteroids se ve pixel-idéntico al
+- [x] `npm run build` termina sin errores.
+- [x] Con el skin `clasico` activo (default, sin tocar nada), Asteroids se ve pixel-idéntico al
       estado actual antes de este spec.
-- [ ] `<SkinSwitcher>` aparece como un pill en la esquina inferior derecha del canvas de Asteroids,
+- [x] `<SkinSwitcher>` aparece como un pill en la esquina inferior derecha del canvas de Asteroids,
       con las 3 opciones `Clásico`/`Neón`/`Retro`.
-- [ ] Elegir `neon` cambia el fondo a `#05050b`, colorea ship/bullets/asteroides/power-up con los
+- [x] Elegir `neon` cambia el fondo a `#05050b`, colorea ship/bullets/asteroides/power-up con los
       tokens del sitio, y agrega halo (`shadowBlur`) visible alrededor de cada uno.
-- [ ] Elegir `retro` cambia el fondo a `#140d00`, usa solo tonos ámbar de la rampa (`#ffb000`,
+- [x] Elegir `retro` cambia el fondo a `#140d00`, usa solo tonos ámbar de la rampa (`#ffb000`,
       `#cc8800`, `#996600`), y no muestra ningún halo ni degradado.
-- [ ] Cambiar de skin en medio de una partida no reinicia la nave, el score, los asteroides en
+- [x] Cambiar de skin en medio de una partida no reinicia la nave, el score, los asteroides en
       pantalla ni el nivel — solo cambia el color en el siguiente frame.
-- [ ] Recargar la página después de elegir `neon` o `retro` conserva ese skin (persistencia en
+- [x] Recargar la página después de elegir `neon` o `retro` conserva ese skin (persistencia en
       `localStorage['av_skin_asteroides']`), sin parpadeo de hidratación en consola.
-- [ ] Los demás 3 juegos (Tetris, Arkanoid, Snake) no cambian de aspecto ni de comportamiento — este
+- [x] Los demás 3 juegos (Tetris, Arkanoid, Snake) no cambian de aspecto ni de comportamiento — este
       spec no los toca.
 
 ## Decisions
