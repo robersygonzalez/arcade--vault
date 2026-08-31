@@ -434,21 +434,35 @@ const ArkanoidGame = forwardRef<RealGameHandle, RealGameProps>(function Arkanoid
 
     // ── Draw ─────────────────────────────────────────────────────────────────
     function draw() {
-      ctx.fillStyle = "#000";
+      const img = tintedCache.get(skinRef.current.id) ?? rawImg;
+      const palette = skinRef.current.palette;
+
+      ctx.fillStyle = palette.background;
       ctx.fillRect(0, 0, W, H);
 
       for (const block of blocks) {
         if (block.alive)
-          drawSprite(ctx, "block_" + block.color, block.x, block.y, block.w, block.h);
+          drawSprite(ctx, img, "block_" + block.color, block.x, block.y, block.w, block.h);
       }
 
       for (const exp of explosions) {
         const frameIndex = Math.min(Math.floor((exp.elapsed / EXPLOSION_DURATION) * 4), 3);
-        drawFrame(ctx, EXPLOSION_FRAMES[exp.color][frameIndex], exp.x, exp.y, exp.w, exp.h);
+        drawFrame(ctx, img, EXPLOSION_FRAMES[exp.color][frameIndex], exp.x, exp.y, exp.w, exp.h);
       }
 
-      drawSprite(ctx, "paddle", paddle.x, paddle.y, paddle.w, paddle.h);
-      drawSprite(ctx, "ball", ball.x, ball.y, ball.w, ball.h);
+      if (palette.glowBlur > 0) {
+        ctx.shadowBlur = palette.glowBlur;
+        ctx.shadowColor = palette.tint!.paddle;
+      }
+      drawSprite(ctx, img, "paddle", paddle.x, paddle.y, paddle.w, paddle.h);
+      ctx.shadowBlur = 0;
+
+      if (palette.glowBlur > 0) {
+        ctx.shadowBlur = palette.glowBlur;
+        ctx.shadowColor = palette.tint!.ball;
+      }
+      drawSprite(ctx, img, "ball", ball.x, ball.y, ball.w, ball.h);
+      ctx.shadowBlur = 0;
     }
 
     // ── Sincronización con React ─────────────────────────────────────────────
