@@ -2,6 +2,7 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import type { RealGameHandle, RealGameProps } from "@/components/games/registry";
+import type { ArkanoidBlockColorName, ArkanoidTint, SkinId } from "@/components/games/skins";
 
 const W = 800;
 const H = 600;
@@ -88,9 +89,46 @@ const SPRITES: { paddle: SpriteFrame; ball: SpriteFrame; blocks: Record<string, 
   },
 };
 
-let ssImg: HTMLCanvasElement | null = null;
+let rawImg: HTMLCanvasElement | null = null;
 let ssLoaded = false;
 const ssCallbacks: (() => void)[] = [];
+const tintedCache = new Map<SkinId, HTMLCanvasElement>();
+
+function buildTintedCopy(raw: HTMLCanvasElement, tint: ArkanoidTint): HTMLCanvasElement {
+  const canvas = document.createElement("canvas");
+  canvas.width = raw.width;
+  canvas.height = raw.height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return canvas;
+  ctx.drawImage(raw, 0, 0);
+
+  function tintRegion(frame: SpriteFrame, color: string) {
+    if (!ctx) return;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(frame.sx, frame.sy, frame.sw, frame.sh);
+    ctx.clip();
+    ctx.globalCompositeOperation = "source-atop";
+    ctx.fillStyle = color;
+    ctx.fillRect(frame.sx, frame.sy, frame.sw, frame.sh);
+    ctx.restore();
+  }
+
+  tintRegion(SPRITES.paddle, tint.paddle);
+  tintRegion(SPRITES.ball, tint.ball);
+
+  for (const [name, frame] of Object.entries(SPRITES.blocks)) {
+    tintRegion(frame, tint.blockColors[name as ArkanoidBlockColorName]);
+  }
+
+  for (const [name, frames] of Object.entries(EXPLOSION_FRAMES)) {
+    for (const frame of frames) {
+      tintRegion(frame, tint.blockColors[name as ArkanoidBlockColorName]);
+    }
+  }
+
+  return canvas;
+}
 
 function loadSpritesheet(cb: () => void) {
   if (ssLoaded) {
