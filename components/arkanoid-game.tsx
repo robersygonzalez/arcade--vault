@@ -2,6 +2,8 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import type { RealGameHandle, RealGameProps } from "@/components/games/registry";
+import { ARKANOID_SKINS, SkinSwitcher, useGameSkin } from "@/components/games/skins";
+import type { ArkanoidBlockColorName, ArkanoidTint, SkinId } from "@/components/games/skins";
 
 const W = 800;
 const H = 600;
@@ -88,9 +90,46 @@ const SPRITES: { paddle: SpriteFrame; ball: SpriteFrame; blocks: Record<string, 
   },
 };
 
-let ssImg: HTMLCanvasElement | null = null;
+let rawImg: HTMLCanvasElement | null = null;
 let ssLoaded = false;
 const ssCallbacks: (() => void)[] = [];
+const tintedCache = new Map<SkinId, HTMLCanvasElement>();
+
+function buildTintedCopy(raw: HTMLCanvasElement, tint: ArkanoidTint): HTMLCanvasElement {
+  const canvas = document.createElement("canvas");
+  canvas.width = raw.width;
+  canvas.height = raw.height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return canvas;
+  ctx.drawImage(raw, 0, 0);
+
+  function tintRegion(frame: SpriteFrame, color: string) {
+    if (!ctx) return;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(frame.sx, frame.sy, frame.sw, frame.sh);
+    ctx.clip();
+    ctx.globalCompositeOperation = "source-atop";
+    ctx.fillStyle = color;
+    ctx.fillRect(frame.sx, frame.sy, frame.sw, frame.sh);
+    ctx.restore();
+  }
+
+  tintRegion(SPRITES.paddle, tint.paddle);
+  tintRegion(SPRITES.ball, tint.ball);
+
+  for (const [name, frame] of Object.entries(SPRITES.blocks)) {
+    tintRegion(frame, tint.blockColors[name as ArkanoidBlockColorName]);
+  }
+
+  for (const [name, frames] of Object.entries(EXPLOSION_FRAMES)) {
+    for (const frame of frames) {
+      tintRegion(frame, tint.blockColors[name as ArkanoidBlockColorName]);
+    }
+  }
+
+  return canvas;
+}
 
 function loadSpritesheet(cb: () => void) {
   if (ssLoaded) {
@@ -98,45 +137,50 @@ function loadSpritesheet(cb: () => void) {
     return;
   }
   ssCallbacks.push(cb);
-  if (ssImg) return;
+  if (rawImg) return;
 
-  const rawImg = new Image();
-  rawImg.onload = () => {
+  const img = new Image();
+  img.onload = () => {
     const oc = document.createElement("canvas");
-    oc.width = rawImg.width;
-    oc.height = rawImg.height;
+    oc.width = img.width;
+    oc.height = img.height;
     const octx = oc.getContext("2d");
     if (!octx) return;
-    octx.drawImage(rawImg, 0, 0);
-    ssImg = oc;
+    octx.drawImage(img, 0, 0);
+    rawImg = oc;
+    tintedCache.set("clasico", rawImg);
+    tintedCache.set("neon", buildTintedCopy(rawImg, ARKANOID_SKINS.neon.tint!));
+    tintedCache.set("retro", buildTintedCopy(rawImg, ARKANOID_SKINS.retro.tint!));
     ssLoaded = true;
     ssCallbacks.forEach((f) => f());
   };
-  rawImg.onerror = () => console.error("Failed to load spritesheet");
-  rawImg.src = "/arkanoid/spritesheet-breakout.png";
+  img.onerror = () => console.error("Failed to load spritesheet");
+  img.src = "/arkanoid/spritesheet-breakout.png";
 }
 
 function drawFrame(
   ctx: CanvasRenderingContext2D,
+  img: HTMLCanvasElement | null,
   frame: SpriteFrame,
   x: number,
   y: number,
   w: number,
   h: number,
 ) {
-  if (!ssLoaded || !ssImg) return;
-  ctx.drawImage(ssImg, frame.sx, frame.sy, frame.sw, frame.sh, x, y, w, h);
+  if (!ssLoaded || !img) return;
+  ctx.drawImage(img, frame.sx, frame.sy, frame.sw, frame.sh, x, y, w, h);
 }
 
 function drawSprite(
   ctx: CanvasRenderingContext2D,
+  img: HTMLCanvasElement | null,
   name: string,
   x: number,
   y: number,
   w: number,
   h: number,
 ) {
-  if (!ssLoaded || !ssImg) return;
+  if (!ssLoaded || !img) return;
   let sp: SpriteFrame | undefined;
   if (name.startsWith("block_")) {
     sp = SPRITES.blocks[name.slice(6)];
@@ -144,7 +188,7 @@ function drawSprite(
     sp = SPRITES[name];
   }
   if (!sp) return;
-  ctx.drawImage(ssImg, sp.sx, sp.sy, sp.sw, sp.sh, x, y, w, h);
+  ctx.drawImage(img, sp.sx, sp.sy, sp.sw, sp.sh, x, y, w, h);
 }
 
 const LEVELS: Level[] = (() => {
@@ -211,6 +255,8 @@ const ArkanoidGame = forwardRef<RealGameHandle, RealGameProps>(function Arkanoid
     forceGameOver: () => {},
     restart: () => {},
   });
+  const [skin, setSkin] = useGameSkin("arkanoid");
+  const skinRef = useRef({ id: skin, palette: ARKANOID_SKINS[skin] });
 
   useEffect(() => {
     onStatsChangeRef.current = onStatsChange;
@@ -219,6 +265,10 @@ const ArkanoidGame = forwardRef<RealGameHandle, RealGameProps>(function Arkanoid
   useEffect(() => {
     onGameOverRef.current = onGameOver;
   }, [onGameOver]);
+
+  useEffect(() => {
+    skinRef.current = { id: skin, palette: ARKANOID_SKINS[skin] };
+  }, [skin]);
 
   useImperativeHandle(
     ref,
@@ -384,21 +434,35 @@ const ArkanoidGame = forwardRef<RealGameHandle, RealGameProps>(function Arkanoid
 
     // ── Draw ─────────────────────────────────────────────────────────────────
     function draw() {
-      ctx.fillStyle = "#000";
+      const img = tintedCache.get(skinRef.current.id) ?? rawImg;
+      const palette = skinRef.current.palette;
+
+      ctx.fillStyle = palette.background;
       ctx.fillRect(0, 0, W, H);
 
       for (const block of blocks) {
         if (block.alive)
-          drawSprite(ctx, "block_" + block.color, block.x, block.y, block.w, block.h);
+          drawSprite(ctx, img, "block_" + block.color, block.x, block.y, block.w, block.h);
       }
 
       for (const exp of explosions) {
         const frameIndex = Math.min(Math.floor((exp.elapsed / EXPLOSION_DURATION) * 4), 3);
-        drawFrame(ctx, EXPLOSION_FRAMES[exp.color][frameIndex], exp.x, exp.y, exp.w, exp.h);
+        drawFrame(ctx, img, EXPLOSION_FRAMES[exp.color][frameIndex], exp.x, exp.y, exp.w, exp.h);
       }
 
-      drawSprite(ctx, "paddle", paddle.x, paddle.y, paddle.w, paddle.h);
-      drawSprite(ctx, "ball", ball.x, ball.y, ball.w, ball.h);
+      if (palette.glowBlur > 0) {
+        ctx.shadowBlur = palette.glowBlur;
+        ctx.shadowColor = palette.tint!.paddle;
+      }
+      drawSprite(ctx, img, "paddle", paddle.x, paddle.y, paddle.w, paddle.h);
+      ctx.shadowBlur = 0;
+
+      if (palette.glowBlur > 0) {
+        ctx.shadowBlur = palette.glowBlur;
+        ctx.shadowColor = palette.tint!.ball;
+      }
+      drawSprite(ctx, img, "ball", ball.x, ball.y, ball.w, ball.h);
+      ctx.shadowBlur = 0;
     }
 
     // ── Sincronización con React ─────────────────────────────────────────────
@@ -484,7 +548,10 @@ const ArkanoidGame = forwardRef<RealGameHandle, RealGameProps>(function Arkanoid
   }, []);
 
   return (
-    <canvas ref={canvasRef} width={800} height={600} style={{ width: "100%", height: "100%" }} />
+    <div style={{ position: "relative", width: "100%", height: "100%" }}>
+      <canvas ref={canvasRef} width={800} height={600} style={{ width: "100%", height: "100%" }} />
+      <SkinSwitcher gameId="arkanoid" skin={skin} onChange={setSkin} />
+    </div>
   );
 });
 
