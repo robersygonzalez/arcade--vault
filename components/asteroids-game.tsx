@@ -117,7 +117,7 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
       }
 
       draw() {
-        c.fillStyle = "#fff";
+        c.fillStyle = skinRef.current.bullet;
         c.beginPath();
         c.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         c.fill();
@@ -182,7 +182,7 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
         c.save();
         c.translate(this.x, this.y);
         c.rotate(this.rot);
-        c.strokeStyle = "#fff";
+        c.strokeStyle = skinRef.current.asteroid;
         c.lineWidth = 1.5;
         c.lineJoin = "round";
         c.beginPath();
@@ -229,12 +229,12 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
         c.save();
         c.translate(this.x, this.y);
         c.rotate(Math.PI / 4);
-        c.strokeStyle = "#0ff";
+        c.strokeStyle = skinRef.current.powerUp;
         c.lineWidth = 2;
         const r = this.radius * pulse;
         c.strokeRect(-r, -r, r * 2, r * 2);
         c.restore();
-        c.fillStyle = "#0ff";
+        c.fillStyle = skinRef.current.powerUp;
         c.font = "bold 12px monospace";
         c.textAlign = "center";
         c.textBaseline = "middle";
@@ -322,7 +322,7 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
         c.save();
         c.translate(this.x, this.y);
         c.rotate(this.angle);
-        c.strokeStyle = "#fff";
+        c.strokeStyle = skinRef.current.ship;
         c.lineWidth = 1.5;
         c.lineJoin = "round";
 
@@ -339,7 +339,7 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
           c.moveTo(-8, -4);
           c.lineTo(-8 - rand(6, 14), 0);
           c.lineTo(-8, 4);
-          c.strokeStyle = "rgba(255, 130, 0, 0.85)";
+          c.strokeStyle = `rgba(${skinRef.current.shipThrustRgb}, 0.85)`;
           c.stroke();
         }
 
@@ -378,7 +378,7 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
 
       draw() {
         const alpha = this.ttl / this.life;
-        c.strokeStyle = `rgba(255,255,255,${alpha.toFixed(2)})`;
+        c.strokeStyle = `rgba(${skinRef.current.particleRgb},${alpha.toFixed(2)})`;
         c.lineWidth = 1;
         c.beginPath();
         c.moveTo(this.x, this.y);
@@ -536,14 +536,14 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
     function drawHUD() {
       if (ship.tripleShot > 0) {
         c.textAlign = "left";
-        c.fillStyle = "#0ff";
+        c.fillStyle = skinRef.current.hudAccent;
         c.font = "15px monospace";
         c.fillText(`3x  ${ship.tripleShot.toFixed(1)}s`, 14, 46);
       }
     }
 
     function draw() {
-      c.fillStyle = "#000";
+      c.fillStyle = skinRef.current.background;
       c.fillRect(0, 0, W, H);
 
       particles.forEach((p) => p.draw());
