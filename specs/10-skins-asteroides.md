@@ -1,6 +1,6 @@
 # SPEC 10 — Skins de Asteroids (clásico / neón / retro) + infraestructura compartida
 
-> **Status:** Draft
+> **Status:** Aprobado
 > **Depends on:** SPEC 05 (Asteroids real)
 > **Date:** 2026-08-31
 > **Objective:** Crear la infraestructura compartida de skins (`components/games/skins.tsx`) y aplicar los 3 skins obligatorios — `clasico`, `neon`, `retro` — a `components/asteroids-game.tsx`.
