@@ -2,6 +2,7 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import type { RealGameHandle, RealGameProps } from "@/components/games/registry";
+import { SNAKE_SKINS, SkinSwitcher, useGameSkin } from "@/components/games/skins";
 
 const W = 800;
 const H = 600;
@@ -79,6 +80,8 @@ const SnakeGame = forwardRef<RealGameHandle, RealGameProps>(function SnakeGame(
     forceGameOver: () => {},
     restart: () => {},
   });
+  const [skin, setSkin] = useGameSkin("snake");
+  const skinRef = useRef(SNAKE_SKINS[skin]);
 
   useEffect(() => {
     onStatsChangeRef.current = onStatsChange;
@@ -87,6 +90,10 @@ const SnakeGame = forwardRef<RealGameHandle, RealGameProps>(function SnakeGame(
   useEffect(() => {
     onGameOverRef.current = onGameOver;
   }, [onGameOver]);
+
+  useEffect(() => {
+    skinRef.current = SNAKE_SKINS[skin];
+  }, [skin]);
 
   useImperativeHandle(
     ref,
@@ -224,18 +231,31 @@ const SnakeGame = forwardRef<RealGameHandle, RealGameProps>(function SnakeGame(
 
     // ── Draw ─────────────────────────────────────────────────────────────────
     function draw() {
-      ctx.fillStyle = "#000";
+      const palette = skinRef.current;
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = palette.background;
       ctx.fillRect(0, 0, W, H);
 
       for (let i = snake.length - 1; i >= 0; i--) {
         const seg = snake[i];
         const isHead = i === 0;
-        ctx.fillStyle = isHead ? "#baffe0" : "#00ff88";
+        const fillColor = isHead ? palette.snakeHead : palette.snakeBody;
+        ctx.fillStyle = fillColor;
+        if (palette.glowBlur > 0) {
+          ctx.shadowBlur = palette.glowBlur;
+          ctx.shadowColor = fillColor;
+        }
         ctx.fillRect(seg.col * CELL, seg.row * CELL, CELL, CELL);
+        ctx.shadowBlur = 0;
         if (isHead) {
-          ctx.strokeStyle = "#ffffff";
+          ctx.strokeStyle = palette.headOutline;
           ctx.lineWidth = 2;
+          if (palette.glowBlur > 0) {
+            ctx.shadowBlur = palette.glowBlur;
+            ctx.shadowColor = palette.headOutline;
+          }
           ctx.strokeRect(seg.col * CELL + 1, seg.row * CELL + 1, CELL - 2, CELL - 2);
+          ctx.shadowBlur = 0;
         }
       }
 
@@ -319,7 +339,12 @@ const SnakeGame = forwardRef<RealGameHandle, RealGameProps>(function SnakeGame(
     };
   }, []);
 
-  return <canvas ref={canvasRef} width={W} height={H} style={{ width: "100%", height: "100%" }} />;
+  return (
+    <div style={{ position: "relative", width: "100%", height: "100%" }}>
+      <canvas ref={canvasRef} width={W} height={H} style={{ width: "100%", height: "100%" }} />
+      <SkinSwitcher gameId="snake" skin={skin} onChange={setSkin} />
+    </div>
+  );
 });
 
 export default SnakeGame;

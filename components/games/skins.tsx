@@ -115,6 +115,39 @@ export const ASTEROIDS_SKINS: Record<SkinId, AsteroidsPalette> = {
   },
 };
 
+export type SnakePalette = {
+  background: string;
+  snakeHead: string;
+  snakeBody: string;
+  headOutline: string;
+  glowBlur: number;
+};
+
+export const SNAKE_SKINS: Record<SkinId, SnakePalette> = {
+  clasico: {
+    background: "#000000",
+    snakeHead: "#baffe0",
+    snakeBody: "#00ff88",
+    headOutline: "#ffffff",
+    glowBlur: 0,
+  },
+  neon: {
+    background: "#05050b",
+    snakeHead: "#00f5ff",
+    snakeBody: "#00ff88",
+    headOutline: "#f5ff00",
+    glowBlur: 10,
+  },
+  retro: {
+    background: "#140d00",
+    snakeHead: "#ffb000",
+    snakeBody: "#cc8800",
+    headOutline: "#996600",
+    glowBlur: 0,
+  },
+};
+
 export const GAME_SKINS = {
   asteroides: ASTEROIDS_SKINS,
+  snake: SNAKE_SKINS,
 } as const;
