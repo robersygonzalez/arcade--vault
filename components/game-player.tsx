@@ -5,7 +5,13 @@ import { useRouter } from "next/navigation";
 import type { Game } from "@/app/data/games";
 import { useUser } from "@/components/user-context";
 import { createClient } from "@/utils/supabase/client";
-import { REAL_GAMES, type RealGameHandle, type HudSlot } from "@/components/games/registry";
+import {
+  REAL_GAMES,
+  TOUCH_CONTROLS,
+  type RealGameHandle,
+  type HudSlot,
+} from "@/components/games/registry";
+import { TouchControls } from "@/components/games/touch-controls";
 
 export default function GamePlayer({ game }: { game: Game }) {
   const router = useRouter();
@@ -152,6 +158,10 @@ export default function GamePlayer({ game }: { game: Game }) {
           <span>CARGA · 1MB</span>
         </div>
       </div>
+
+      {RealGame && TOUCH_CONTROLS[game.id] && (
+        <TouchControls config={TOUCH_CONTROLS[game.id]} onPauseTap={togglePause} />
+      )}
 
       {over && (
         <div className="modal-bd">
