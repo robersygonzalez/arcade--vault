@@ -1,6 +1,6 @@
 # SPEC 13 — Controles táctiles para móvil (D-pad + botones)
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 05 (Asteroides real), SPEC 07 (Tetris real), SPEC 08 (Arkanoid real), SPEC 09 (Snake real)
 > **Date:** 2026-09-01
 > **Objective:** Añadir un D-pad + hasta 2 botones de acción, visibles solo en dispositivos táctiles, que permitan jugar los 4 juegos reales sin teclado físico.
@@ -133,25 +133,25 @@ className="crt">...</div>` existente, renderizar `{RealGame && TOUCH_CONTROLS[ga
 
 ## Acceptance criteria
 
-- [ ] `npm run build` termina sin errores.
-- [ ] Con Chrome DevTools en modo escritorio (sin emulación táctil), la barra de controles no aparece
+- [x] `npm run build` termina sin errores.
+- [x] Con Chrome DevTools en modo escritorio (sin emulación táctil), la barra de controles no aparece
       en ningún juego.
-- [ ] Con Chrome DevTools → Toggle device toolbar (emulación táctil activa), la barra aparece debajo
+- [x] Con Chrome DevTools → Toggle device toolbar (emulación táctil activa), la barra aparece debajo
       del CRT en los 4 juegos, con el subconjunto de flechas/botones que le corresponde a cada uno
       (Arkanoid solo izquierda/derecha, Snake las 4 flechas sin botones, Tetris y Asteroides con su
       botón de acción etiquetado).
-- [ ] Tocar y mantener una flecha del D-pad mueve/rota/acelera igual que mantener la tecla física
+- [x] Tocar y mantener una flecha del D-pad mueve/rota/acelera igual que mantener la tecla física
       equivalente, en los 4 juegos.
-- [ ] Tocar el botón de acción de Asteroides dispara un proyectil; el de Tetris hace caída rápida de
+- [x] Tocar el botón de acción de Asteroides dispara un proyectil; el de Tetris hace caída rápida de
       la pieza actual.
-- [ ] El botón PAUSA de la barra inferior pausa/reanuda el juego igual que el PAUSA del HUD superior;
+- [x] El botón PAUSA de la barra inferior pausa/reanuda el juego igual que el PAUSA del HUD superior;
       ambos reflejan el mismo estado.
-- [ ] Ningún archivo `components/{asteroids,tetris,arkanoid,snake}-game.tsx` cambia — el diff de este
+- [x] Ningún archivo `components/{asteroids,tetris,arkanoid,snake}-game.tsx` cambia — el diff de este
       spec toca solo `components/game-player.tsx`, `components/games/registry.ts`,
       `components/games/touch-controls.tsx` (nuevo) y `app/globals.css`.
-- [ ] Con un teclado físico/Bluetooth conectado en modo táctil, las teclas de flecha/Space/KeyX siguen
+- [x] Con un teclado físico/Bluetooth conectado en modo táctil, las teclas de flecha/Space/KeyX siguen
       funcionando exactamente igual que hoy, en paralelo al D-pad.
-- [ ] Arrastrar el dedo sobre la barra de controles no hace scroll de la página.
+- [x] Arrastrar el dedo sobre la barra de controles no hace scroll de la página.
 
 ## Decisions
 
