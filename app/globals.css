@@ -1071,6 +1071,113 @@ a {
   box-shadow: 0 0 6px var(--green);
 }
 
+/* ===== touch controls (mobile D-pad + action buttons) ===== */
+.touch-controls {
+  display: none;
+}
+@media (pointer: coarse) {
+  .touch-controls {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 18px;
+    padding: 16px 20px 20px;
+    border: 1px solid var(--line);
+    background: var(--bg-2);
+    touch-action: none;
+  }
+
+  .touch-dpad {
+    display: grid;
+    grid-template-columns: 52px 52px 52px;
+    grid-template-rows: 52px 52px 52px;
+    grid-template-areas:
+      ".    up    ."
+      "left .     right"
+      ".    down  .";
+    gap: 4px;
+  }
+  .touch-dpad-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--pixel);
+    font-size: 14px;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--cyan);
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+    cursor: pointer;
+  }
+  .touch-dpad-btn:active {
+    color: var(--cyan);
+    background: rgba(0, 245, 255, 0.15);
+    box-shadow: 0 0 10px rgba(0, 245, 255, 0.55);
+  }
+  .touch-dpad-up {
+    grid-area: up;
+  }
+  .touch-dpad-left {
+    grid-area: left;
+  }
+  .touch-dpad-right {
+    grid-area: right;
+  }
+  .touch-dpad-down {
+    grid-area: down;
+  }
+
+  .touch-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .touch-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 76px;
+    height: 56px;
+    padding: 4px 6px;
+    text-align: center;
+    font-family: var(--pixel);
+    font-size: 8px;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--magenta);
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+    cursor: pointer;
+  }
+  .touch-action-btn:active {
+    color: var(--magenta);
+    background: rgba(255, 0, 110, 0.15);
+    box-shadow: 0 0 10px rgba(255, 0, 110, 0.55);
+  }
+
+  .touch-pause-btn {
+    position: absolute;
+    top: 8px;
+    right: 20px;
+    padding: 8px 12px;
+    font-family: var(--pixel);
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--yellow);
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+    cursor: pointer;
+  }
+  .touch-pause-btn:active {
+    color: var(--yellow);
+    background: rgba(245, 255, 0, 0.15);
+    box-shadow: 0 0 10px rgba(245, 255, 0, 0.55);
+  }
+}
+
 /* fake in-screen game */
 .game-arena {
   position: absolute;

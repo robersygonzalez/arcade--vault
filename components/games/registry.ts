@@ -27,3 +27,40 @@ export const REAL_GAMES: Record<
   arkanoid: ArkanoidGame,
   snake: SnakeGame,
 };
+
+export type TouchButton = { code: string; label: string };
+
+export type TouchControlConfig = {
+  up?: string; // key code, ej. "ArrowUp"
+  down?: string;
+  left?: string;
+  right?: string;
+  buttonA?: TouchButton;
+  buttonB?: TouchButton;
+};
+
+export const TOUCH_CONTROLS: Record<string, TouchControlConfig> = {
+  asteroides: {
+    left: "ArrowLeft",
+    right: "ArrowRight",
+    up: "ArrowUp",
+    buttonA: { code: "Space", label: "DISPARAR" },
+  },
+  tetris: {
+    left: "ArrowLeft",
+    right: "ArrowRight",
+    down: "ArrowDown",
+    up: "ArrowUp", // rota, igual que el teclado (case "ArrowUp"/"KeyX" en tetris-game.tsx L371-373)
+    buttonA: { code: "Space", label: "CAÍDA" },
+  },
+  arkanoid: {
+    left: "ArrowLeft",
+    right: "ArrowRight",
+  },
+  snake: {
+    up: "ArrowUp",
+    down: "ArrowDown",
+    left: "ArrowLeft",
+    right: "ArrowRight",
+  },
+};
