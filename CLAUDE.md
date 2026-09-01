@@ -52,6 +52,17 @@ memory is `references/game-with-themes.md`, which also tracks whether the shared
 `components/games/skins.ts` infrastructure has been created yet (paid for by the first game that
 gets skinned). Flow: `skin-designer <game>` → `/spec-impl specs/NN-skins-<slug>.md`.
 
+A fourth, orthogonal track audits and specs mobile-web fixes: the `mobile-porter` subagent
+(`.claude/agents/mobile-porter.md`) picks up where `specs/13-controles-tactiles.md` left off — that
+spec covered touch input (D-pad + action buttons) only, never layout, viewport, or safe-area. It
+audits **one zone per invocation** (nav, jugador/CRT, detalle, hall, home, biblioteca, login, about,
+or the shared global viewport/safe-area base), whichever the user names, diagnoses it against a
+320/375/414px budget plus touch-target/hover-only/safe-area rules, and writes
+`specs/NN-mobile-<zona>.md` — it never writes code itself. Its memory is
+`references/mobile-audit.md`, which tracks every zone as pending/specced/fixed/discarded and whether
+the shared global base has been paid for yet. Flow: `mobile-porter <zona>` →
+`/spec-impl specs/NN-mobile-<zona>.md`.
+
 ## Read the bundled Next.js docs before writing code
 
 This project runs **Next.js 16.3.1** with **React 19.2** — recent enough that training data is likely stale or wrong.
@@ -74,6 +85,9 @@ check `node_modules/next/dist/docs/01-app/` for the current API. Notably:
   obtener 2 specs listos en `specs/game-jam/<game-id>/` (ver "Required workflow" arriba).
 - Usa el agente `skin-designer <juego>` para diseñar los 3 skins obligatorios (clasico/neon/retro)
   de un juego ya implementado, uno por invocación (ver "Required workflow" arriba).
+- Usa el agente `mobile-porter <zona>` para auditar y especificar el arreglo móvil de una zona del
+  sitio a la vez (nav, jugador/CRT, detalle, hall, home, biblioteca, login, about), continuando donde
+  paró SPEC 13 (ver "Required workflow" arriba).
 - `.claude/hooks/format-and-lint.mjs` corre automáticamente (Prettier + ESLint) después de cada `Write`/`Edit` — ver `.claude/settings.json`.
 
 ## Architecture
@@ -131,6 +145,8 @@ moved into `public/`, `templates/` holds the original static HTML/JSX mockups th
 from — useful for design reference, not live code. `game-suggestions-todo.md` is the `game-planner`
 subagent's persistent memory of every game it has suggested, implemented, or discarded, and
 `game-with-themes.md` is the `skin-designer` subagent's registry of which games already have their 3
-skins and whether the shared skin infrastructure exists yet (see "Required workflow" above).
+skins and whether the shared skin infrastructure exists yet, and `mobile-audit.md` is the
+`mobile-porter` subagent's registry of which mobile-web zones are pending/specced/fixed/discarded
+(see "Required workflow" above).
 
 See "Required workflow" above for how feature work should be planned before writing code.
