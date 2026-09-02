@@ -427,13 +427,7 @@ const TetrisGame = forwardRef<RealGameHandle, RealGameProps>(function TetrisGame
         ref={nextCanvasRef}
         width={NEXT_BLOCK * 4}
         height={NEXT_BLOCK * 4}
-        style={{
-          position: "absolute",
-          top: 8,
-          right: 8,
-          background: "#1a1a25",
-          border: "1px solid rgba(255,255,255,0.15)",
-        }}
+        className="tetris-next-canvas"
       />
     </div>
   );
