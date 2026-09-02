@@ -1,6 +1,6 @@
 # SPEC 15 — Arreglo móvil: zona jugador (CRT + HUD + controles táctiles)
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 13 (Controles táctiles — input, no se reabre), SPEC 05/07/08/09 (los 4 juegos
 > reales originales), `specs/game-jam/frogger/01-frogger-core.md` (Frogger, sin `TOUCH_CONTROLS`)
 > **Date:** 2026-09-02

@@ -77,6 +77,10 @@ spec en el código, no antes):
 
 ## Especificadas
 
+_(vacío — ninguna zona tiene spec pendiente de implementar)_
+
+## Arregladas
+
 - [x] **JUGADOR** — spec 15 · 2026-09-02
       `specs/15-mobile-jugador.md` arregla: `.touch-pause-btn` pasa de `position:absolute` a fila
       propia (elimina solape con botón A); `.touch-controls` reduce padding/gap a ≤520px (cierra
@@ -90,10 +94,6 @@ spec en el código, no antes):
       `dvh` en landscape corto (~667×375). Explícitamente fuera de scope: `TOUCH_CONTROLS["frogger"]`
       (brecha de input, no de layout — Frogger sigue sin ser jugable por táctil, pendiente de spec
       propio).
-
-## Arregladas
-
-_(vacío — ninguna zona está implementada en el código todavía)_
 
 ## Descartadas
 
