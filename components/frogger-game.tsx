@@ -660,6 +660,7 @@ const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGa
         height={CANVAS_H}
         style={{ width: "100%", height: "100%" }}
       />
+      <SkinSwitcher gameId="frogger" skin={skin} onChange={setSkin} />
     </div>
   );
 });
