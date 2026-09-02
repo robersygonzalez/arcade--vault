@@ -1095,6 +1095,7 @@ a {
   .touch-controls {
     position: relative;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
@@ -1174,9 +1175,10 @@ a {
   }
 
   .touch-pause-btn {
-    position: absolute;
-    top: 8px;
-    right: 20px;
+    order: -1;
+    flex: 0 0 100%;
+    margin-left: auto;
+    margin-bottom: 12px;
     padding: 8px 12px;
     font-family: var(--pixel);
     font-size: 8px;
