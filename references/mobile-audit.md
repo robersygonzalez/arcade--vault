@@ -47,16 +47,6 @@ spec en el código, no antes):
       `inert`/`aria-hidden` (sus 5 enlaces quedan en el tab order incluso en escritorio); footer con
       padding inline fijo `20px 32px`
 
-- [ ] **JUGADOR** — `components/game-player.tsx`, `components/games/touch-controls.tsx`,
-      `components/games/skins.tsx`, `components/{asteroids,tetris,arkanoid,snake}-game.tsx`,
-      `app/globals.css:995-1179`
-      `.touch-pause-btn` (`absolute; top:8; right:20`) se solapa con el botón A — tocar la parte alta
-      de "DISPARAR" pausa la partida; `.touch-controls` pide ~296px mínimos, a 320px de viewport solo
-      hay 288px disponibles; `.crt { padding: 24px }` nunca se reduce → área jugable de 240×180px a
-      320px de ancho; canvas de Tetris es 300×600 (1:2) dentro de un `.crt-screen` 4:3 → se renderiza
-      a ~90px de ancho, letterboxed; ningún juego escala por `devicePixelRatio` (se ven borrosos en
-      2×/3×); `SkinSwitcher` usa `<button>` sin estilar, muy por debajo de 44×44px de objetivo táctil
-
 - [ ] **DETALLE** — `app/juegos/[id]/page.tsx`, `app/globals.css:860-885,909`
       `.stat-strip` (`grid-template-columns: repeat(3,1fr)`) y `.lb-row`
       (`grid-template-columns: 36px 1fr 110px`) sin ningún breakpoint — nunca se reflowan
@@ -87,7 +77,19 @@ spec en el código, no antes):
 
 ## Especificadas
 
-_(vacío — ninguna zona tiene spec todavía)_
+- [x] **JUGADOR** — spec 15 · 2026-09-02
+      `specs/15-mobile-jugador.md` arregla: `.touch-pause-btn` pasa de `position:absolute` a fila
+      propia (elimina solape con botón A); `.touch-controls` reduce padding/gap a ≤520px (cierra
+      déficit de 8px a 320px); `.crt` reduce padding a ≤520px (área jugable 240×180 → 264×198 a
+      320px); clase compartida `.game-canvas` con `object-fit:contain` en los 5 canvases (incluye
+      Frogger, nuevo desde `REAL_GAMES`, que se veía deformado 8:7 dentro del marco 4:3; y corrige el
+      letterboxing manual de Tetris); vista previa de próxima pieza de Tetris reposicionada/reducida a
+      ≤520px (dejaba de solaparse con el canvas principal); helper `getHiDPIContext` escala los 5
+      canvases por `devicePixelRatio` (tope 3×), con el ajuste companion de `scaleX` en
+      `arkanoid-game.tsx:359`; `SkinSwitcher` gana objetivo táctil ≥44×44px; `.crt-screen` acotado por
+      `dvh` en landscape corto (~667×375). Explícitamente fuera de scope: `TOUCH_CONTROLS["frogger"]`
+      (brecha de input, no de layout — Frogger sigue sin ser jugable por táctil, pendiente de spec
+      propio).
 
 ## Arregladas
 
