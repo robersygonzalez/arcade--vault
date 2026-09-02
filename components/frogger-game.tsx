@@ -412,6 +412,15 @@ const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGa
       ctx.setLineDash([]);
     }
 
+    function withGlow(color: string, drawFn: () => void) {
+      if (skinRef.current.glowBlur > 0) {
+        ctx.shadowBlur = skinRef.current.glowBlur;
+        ctx.shadowColor = color;
+      }
+      drawFn();
+      ctx.shadowBlur = 0;
+    }
+
     function drawGoals() {
       GOAL_START_COLS.forEach((startCol, i) => {
         const x = startCol * CELL;
@@ -421,12 +430,16 @@ const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGa
         ctx.fillRect(x + 2, y + 2, w - 4, CELL - 4);
         ctx.strokeStyle = skinRef.current.goalBorder;
         ctx.lineWidth = 2;
-        ctx.strokeRect(x + 2, y + 2, w - 4, CELL - 4);
+        withGlow(skinRef.current.goalBorder, () => {
+          ctx.strokeRect(x + 2, y + 2, w - 4, CELL - 4);
+        });
         if (goals[i]) {
           ctx.fillStyle = skinRef.current.goalFilledDot;
-          ctx.beginPath();
-          ctx.ellipse(x + w / 2, y + CELL / 2, 12, 10, 0, 0, Math.PI * 2);
-          ctx.fill();
+          withGlow(skinRef.current.goalFilledDot, () => {
+            ctx.beginPath();
+            ctx.ellipse(x + w / 2, y + CELL / 2, 12, 10, 0, 0, Math.PI * 2);
+            ctx.fill();
+          });
         }
       });
     }
@@ -438,22 +451,32 @@ const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGa
       const h = CELL;
       if (entity.type === "car") {
         ctx.fillStyle = skinRef.current.carBody;
-        ctx.fillRect(x + 3, y + 8, w - 6, h - 16);
+        withGlow(skinRef.current.carBody, () => {
+          ctx.fillRect(x + 3, y + 8, w - 6, h - 16);
+        });
         ctx.fillStyle = skinRef.current.carWheel;
-        ctx.beginPath();
-        ctx.arc(x + 8, y + h - 6, 4, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(x + w - 8, y + h - 6, 4, 0, Math.PI * 2);
-        ctx.fill();
+        withGlow(skinRef.current.carWheel, () => {
+          ctx.beginPath();
+          ctx.arc(x + 8, y + h - 6, 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(x + w - 8, y + h - 6, 4, 0, Math.PI * 2);
+          ctx.fill();
+        });
       } else if (entity.type === "truck") {
         ctx.fillStyle = skinRef.current.truckBody;
-        ctx.fillRect(x + 2, y + 6, w - 4, h - 12);
+        withGlow(skinRef.current.truckBody, () => {
+          ctx.fillRect(x + 2, y + 6, w - 4, h - 12);
+        });
         ctx.fillStyle = skinRef.current.truckCabin;
-        ctx.fillRect(x + 2, y + 6, Math.min(CELL - 8, w - 4), h - 12);
+        withGlow(skinRef.current.truckCabin, () => {
+          ctx.fillRect(x + 2, y + 6, Math.min(CELL - 8, w - 4), h - 12);
+        });
       } else if (entity.type === "log") {
         ctx.fillStyle = skinRef.current.logBody;
-        ctx.fillRect(x, y + 10, w, h - 20);
+        withGlow(skinRef.current.logBody, () => {
+          ctx.fillRect(x, y + 10, w, h - 20);
+        });
         ctx.strokeStyle = skinRef.current.logVein;
         ctx.lineWidth = 1;
         for (let lx = x + 6; lx < x + w; lx += 10) {
@@ -468,9 +491,11 @@ const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGa
           const cy = y + CELL / 2;
           ctx.globalAlpha = entity.submerged ? skinRef.current.turtleSubmergedAlpha : 1;
           ctx.fillStyle = skinRef.current.turtleBody;
-          ctx.beginPath();
-          ctx.ellipse(cx, cy, 15, 11, 0, 0, Math.PI * 2);
-          ctx.fill();
+          withGlow(skinRef.current.turtleBody, () => {
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, 15, 11, 0, 0, Math.PI * 2);
+            ctx.fill();
+          });
           ctx.globalAlpha = 1;
         }
       }
@@ -489,9 +514,11 @@ const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGa
       const cx = visualCol * CELL + CELL / 2;
       const cy = visualRow * CELL + CELL / 2 + hop;
       ctx.fillStyle = skinRef.current.frogBody;
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, 14, 12, 0, 0, Math.PI * 2);
-      ctx.fill();
+      withGlow(skinRef.current.frogBody, () => {
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, 14, 12, 0, 0, Math.PI * 2);
+        ctx.fill();
+      });
       ctx.fillStyle = skinRef.current.frogEyeWhite;
       ctx.beginPath();
       ctx.arc(cx - 5, cy - 6, 3, 0, Math.PI * 2);
