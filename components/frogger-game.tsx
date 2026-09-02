@@ -390,9 +390,9 @@ const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGa
 
     // ── Draw ─────────────────────────────────────────────────────────────────
     function zoneColor(row: number): string {
-      if (row >= ROW_ROAD_TOP && row <= ROW_ROAD_BOT) return "#111318";
-      if (row >= ROW_RIVER_TOP && row <= ROW_RIVER_BOT) return "#00202c";
-      return "#0a2f1a"; // metas, franja media segura, base de inicio
+      if (row >= ROW_ROAD_TOP && row <= ROW_ROAD_BOT) return skinRef.current.roadBg;
+      if (row >= ROW_RIVER_TOP && row <= ROW_RIVER_BOT) return skinRef.current.riverBg;
+      return skinRef.current.safeBg; // metas, franja media segura, base de inicio
     }
 
     function drawZones() {
