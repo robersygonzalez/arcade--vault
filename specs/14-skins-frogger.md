@@ -1,6 +1,6 @@
 # SPEC 14 — Skins de Frogger (clásico / neón / retro)
 
-> **Status:** Draft
+> **Status:** Aprobado
 > **Depends on:** `specs/game-jam/frogger/01-frogger-core.md` (Frogger real), SPEC 10 (infraestructura compartida de skins, `components/games/skins.tsx`)
 > **Date:** 2026-09-02
 > **Objective:** Añadir la entrada de Frogger al mapa de paletas compartido y skinear `components/frogger-game.tsx` con los 3 skins obligatorios — `clasico`, `neon`, `retro`.
