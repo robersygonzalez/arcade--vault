@@ -106,7 +106,7 @@ const TetrisGame = forwardRef<RealGameHandle, RealGameProps>(function TetrisGame
     const nextCanvasEl = nextCanvasRef.current;
     if (!canvasEl || !nextCanvasEl) return;
     const context = getHiDPIContext(canvasEl, COLS * BLOCK, ROWS * BLOCK);
-    const nextContext = nextCanvasEl.getContext("2d");
+    const nextContext = getHiDPIContext(nextCanvasEl, NEXT_BLOCK * 4, NEXT_BLOCK * 4);
     if (!context || !nextContext) return;
     const canvas = canvasEl;
     const nextCanvas = nextCanvasEl;
