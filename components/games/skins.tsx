@@ -49,13 +49,11 @@ export function SkinSwitcher({
   onChange: (next: SkinId) => void;
 }) {
   return (
-    <div
-      onMouseMove={(e) => e.stopPropagation()}
-      style={{ position: "absolute", bottom: 8, right: 8, display: "flex", gap: 4, zIndex: 10 }}
-    >
+    <div className="skin-switcher" onMouseMove={(e) => e.stopPropagation()}>
       {SKIN_ORDER.map((id) => (
         <button
           key={id}
+          className="skin-switcher-btn"
           aria-pressed={id === skin}
           aria-label={`Cambiar skin de ${gameId} a ${SKIN_LABELS[id]}`}
           onClick={() => onChange(id)}
