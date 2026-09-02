@@ -222,19 +222,38 @@ const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGa
       bestRowReached = ROW_START;
     }
 
-    // ── Colisiones y soporte (implementación real en el Paso 5) ───────────────
+    // ── Colisiones y soporte ────────────────────────────────────────────────
     function checkRoadCollision(f: Frog, ls: Lane[]): boolean {
-      void f;
-      void ls;
-      return false;
+      const lane = ls.find((l) => l.row === f.row);
+      if (!lane) return false;
+      return lane.entities.some((e) => f.col >= e.col && f.col < e.col + e.width);
     }
+
     function getSupport(f: Frog, ls: Lane[]): Entity | null {
-      void f;
-      void ls;
-      return null;
+      const lane = ls.find((l) => l.row === f.row);
+      if (!lane) return null;
+      const entity = lane.entities.find((e) => f.col >= e.col && f.col < e.col + e.width);
+      if (!entity) return null;
+      if (entity.type === "turtle" && entity.submerged) return null;
+      return entity;
     }
+
     function checkGoal(f: Frog) {
-      void f;
+      const index = GOAL_START_COLS.findIndex(
+        (startCol) => f.col >= startCol && f.col < startCol + GOAL_WIDTH_COLS,
+      );
+      if (index === -1 || goals[index]) {
+        killFrog();
+        return;
+      }
+      goals[index] = true;
+      score += SCORE_PER_GOAL + Math.floor(roundTimeMs / 1000) * SCORE_TIME_BONUS_MULT;
+      if (goals.every(Boolean)) {
+        score += SCORE_PER_ROUND;
+        completeRound();
+      } else {
+        resetFrog();
+      }
     }
 
     function completeRound() {
