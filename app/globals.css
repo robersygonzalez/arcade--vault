@@ -807,6 +807,22 @@ a {
   filter: drop-shadow(0 0 6px rgba(245, 255, 0, 0.35));
 }
 
+.cover-frogger {
+  background: linear-gradient(180deg, #0a0a18 0%, #0a0a18 45%, #001f2a 45%, #001f2a 100%);
+}
+.cover-frogger::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(90deg, var(--yellow) 0 10px, transparent 10px 22px) 0 32%/100% 3px
+      no-repeat,
+    linear-gradient(var(--magenta), var(--magenta)) 15% 20%/22px 8px no-repeat,
+    linear-gradient(var(--cyan), var(--cyan)) 62% 12%/26px 8px no-repeat,
+    radial-gradient(ellipse 12px 8px at 50% 68%, var(--green) 0 60%, transparent 62%);
+  filter: drop-shadow(0 0 6px rgba(0, 255, 136, 0.45));
+}
+
 /* ===== detail screen ===== */
 .av-detail {
   display: grid;
