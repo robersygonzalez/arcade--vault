@@ -1,7 +1,7 @@
 "use client";
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
-import type { RealGameHandle, RealGameProps } from "@/components/games/registry";
+import type { HudSlot, RealGameHandle, RealGameProps } from "@/components/games/registry";
 
 const COLS = 16;
 const ROWS = 14;
@@ -40,6 +40,18 @@ const TURTLE_SUBMERGED_MS = 1500;
 const MAX_FRAME_DT_MS = 50;
 
 type Direction = "up" | "down" | "left" | "right";
+
+const KEY_DIRS: Record<string, Direction> = {
+  ArrowUp: "up",
+  ArrowDown: "down",
+  ArrowLeft: "left",
+  ArrowRight: "right",
+};
+
+const FROG_START_COL = Math.floor(COLS / 2);
+
+// 5 bocas de 2 columnas cada una, distribuidas con hueco de 1 columna entre ellas y en los bordes.
+const GOAL_START_COLS = Array.from({ length: GOALS_COUNT }, (_, i) => 1 + i * 3);
 
 interface Entity {
   col: number;
@@ -131,6 +143,19 @@ function buildLanes(level: number): Lane[] {
   return lanes;
 }
 
+function spawnFrog(): Frog {
+  return {
+    col: FROG_START_COL,
+    row: ROW_START,
+    animating: false,
+    animT: 0,
+    fromCol: FROG_START_COL,
+    fromRow: ROW_START,
+    targetCol: FROG_START_COL,
+    targetRow: ROW_START,
+  };
+}
+
 const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGame(
   { onStatsChange, onGameOver },
   ref,
@@ -167,15 +192,406 @@ const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGa
     if (!canvasEl) return;
     const context = canvasEl.getContext("2d");
     if (!context) return;
-    const canvas = canvasEl;
     const ctx = context;
 
-    // El resto del game loop (buildLanes, update, draw, colisiones,
-    // completeRound, killFrog) se añade en los pasos siguientes del plan.
-    void canvas;
-    void ctx;
+    // ── Estado mutable ───────────────────────────────────────────────────────
+    let level = 1;
+    let lives = LIVES_INITIAL;
+    let score = 0;
+    let bestRowReached = ROW_START;
+    let lanes: Lane[] = buildLanes(level);
+    let goals: boolean[] = new Array(GOALS_COUNT).fill(false);
+    let frog: Frog = spawnFrog();
+    let pendingDir: Direction | null = null;
+    let state: GameState = "playing";
+    let paused = false;
+    let roundTimeTotalMs = 0;
+    let roundTimeMs = 0;
 
-    return () => {};
+    function startRound() {
+      const seconds = Math.max(
+        ROUND_TIME_MIN_S,
+        ROUND_TIME_INITIAL_S - (level - 1) * ROUND_TIME_STEP_S,
+      );
+      roundTimeTotalMs = seconds * 1000;
+      roundTimeMs = roundTimeTotalMs;
+    }
+
+    function resetFrog() {
+      frog = spawnFrog();
+      bestRowReached = ROW_START;
+    }
+
+    // ── Colisiones y soporte (implementación real en el Paso 5) ───────────────
+    function checkRoadCollision(f: Frog, ls: Lane[]): boolean {
+      void f;
+      void ls;
+      return false;
+    }
+    function getSupport(f: Frog, ls: Lane[]): Entity | null {
+      void f;
+      void ls;
+      return null;
+    }
+    function checkGoal(f: Frog) {
+      void f;
+    }
+
+    function completeRound() {
+      resetFrog();
+      goals = new Array(GOALS_COUNT).fill(false);
+      level += 1;
+      lanes = buildLanes(level);
+      startRound();
+    }
+
+    function killFrog() {
+      lives -= 1;
+      if (lives <= 0) {
+        lives = 0;
+        state = "gameover";
+        return;
+      }
+      resetFrog();
+      startRound();
+    }
+
+    // ── Movimiento de entidades ─────────────────────────────────────────────
+    function moveLanes(dtMs: number) {
+      for (const lane of lanes) {
+        for (const entity of lane.entities) {
+          entity.col += (lane.speed * lane.dir * dtMs) / 16;
+          if (lane.dir === 1 && entity.col > COLS) entity.col = -entity.width;
+          if (lane.dir === -1 && entity.col + entity.width < 0) entity.col = COLS;
+        }
+      }
+    }
+
+    function updateTurtles(dtMs: number) {
+      for (const lane of lanes) {
+        for (const entity of lane.entities) {
+          if (entity.type !== "turtle") continue;
+          entity.submergeT = (entity.submergeT ?? 0) + dtMs;
+          if (!entity.submerged && entity.submergeT >= TURTLE_VISIBLE_MS) {
+            entity.submerged = true;
+            entity.submergeT = 0;
+          } else if (entity.submerged && entity.submergeT >= TURTLE_SUBMERGED_MS) {
+            entity.submerged = false;
+            entity.submergeT = 0;
+          }
+        }
+      }
+    }
+
+    // ── Rana ─────────────────────────────────────────────────────────────────
+    function tryJump(dir: Direction) {
+      let targetCol = frog.col;
+      let targetRow = frog.row;
+      if (dir === "up") targetRow -= 1;
+      else if (dir === "down") targetRow += 1;
+      else if (dir === "left") targetCol -= 1;
+      else if (dir === "right") targetCol += 1;
+      targetCol = Math.max(0, Math.min(COLS - 1, targetCol));
+      targetRow = Math.max(ROW_GOALS, Math.min(ROW_START, targetRow));
+      if (targetCol === frog.col && targetRow === frog.row) return;
+      frog.fromCol = frog.col;
+      frog.fromRow = frog.row;
+      frog.targetCol = targetCol;
+      frog.targetRow = targetRow;
+      frog.animating = true;
+      frog.animT = 0;
+    }
+
+    function applyRiverDrift(dtMs: number) {
+      const support = getSupport(frog, lanes);
+      if (!support) return;
+      const lane = lanes.find((l) => l.row === frog.row);
+      if (!lane) return;
+      frog.col += (lane.speed * lane.dir * dtMs) / 16;
+    }
+
+    function onFrogLanded() {
+      if (frog.row < bestRowReached) {
+        score += SCORE_PER_ADVANCE;
+        bestRowReached = frog.row;
+      }
+      if (frog.row === ROW_GOALS) {
+        checkGoal(frog);
+        return;
+      }
+      if (frog.row >= ROW_ROAD_TOP && frog.row <= ROW_ROAD_BOT) {
+        if (checkRoadCollision(frog, lanes)) killFrog();
+      }
+    }
+
+    // ── Update ───────────────────────────────────────────────────────────────
+    function update(dtMs: number) {
+      if (state !== "playing") return;
+
+      moveLanes(dtMs);
+      updateTurtles(dtMs);
+
+      if (frog.animating) {
+        frog.animT += dtMs;
+        if (frog.animT >= JUMP_DURATION_MS) {
+          frog.animT = JUMP_DURATION_MS;
+          frog.col = frog.targetCol;
+          frog.row = frog.targetRow;
+          frog.animating = false;
+          onFrogLanded();
+        }
+      } else {
+        if (pendingDir) {
+          tryJump(pendingDir);
+          pendingDir = null;
+        }
+        if (frog.row >= ROW_RIVER_TOP && frog.row <= ROW_RIVER_BOT) {
+          applyRiverDrift(dtMs);
+        }
+        if (frog.row >= ROW_ROAD_TOP && frog.row <= ROW_ROAD_BOT) {
+          if (checkRoadCollision(frog, lanes)) killFrog();
+        }
+      }
+
+      if (state === "playing") {
+        roundTimeMs -= dtMs;
+        if (roundTimeMs <= 0) {
+          roundTimeMs = 0;
+          killFrog();
+        }
+      }
+    }
+
+    // ── Draw ─────────────────────────────────────────────────────────────────
+    function zoneColor(row: number): string {
+      if (row >= ROW_ROAD_TOP && row <= ROW_ROAD_BOT) return "#111318";
+      if (row >= ROW_RIVER_TOP && row <= ROW_RIVER_BOT) return "#00202c";
+      return "#0a2f1a"; // metas, franja media segura, base de inicio
+    }
+
+    function drawZones() {
+      for (let row = 0; row < ROWS; row++) {
+        ctx.fillStyle = zoneColor(row);
+        ctx.fillRect(0, row * CELL, CANVAS_W, CELL);
+      }
+      ctx.strokeStyle = "rgba(245, 255, 0, 0.35)";
+      ctx.lineWidth = 1;
+      ctx.setLineDash([10, 8]);
+      for (let row = ROW_ROAD_TOP + 1; row <= ROW_ROAD_BOT; row++) {
+        ctx.beginPath();
+        ctx.moveTo(0, row * CELL);
+        ctx.lineTo(CANVAS_W, row * CELL);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+    }
+
+    function drawGoals() {
+      GOAL_START_COLS.forEach((startCol, i) => {
+        const x = startCol * CELL;
+        const y = ROW_GOALS * CELL;
+        const w = GOAL_WIDTH_COLS * CELL;
+        ctx.fillStyle = "#0d3d20";
+        ctx.fillRect(x + 2, y + 2, w - 4, CELL - 4);
+        ctx.strokeStyle = "#f5ff00";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x + 2, y + 2, w - 4, CELL - 4);
+        if (goals[i]) {
+          ctx.fillStyle = "#00ff88";
+          ctx.beginPath();
+          ctx.ellipse(x + w / 2, y + CELL / 2, 12, 10, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      });
+    }
+
+    function drawEntity(lane: Lane, entity: Entity) {
+      const x = entity.col * CELL;
+      const y = lane.row * CELL;
+      const w = entity.width * CELL;
+      const h = CELL;
+      if (entity.type === "car") {
+        ctx.fillStyle = "#ff006e";
+        ctx.fillRect(x + 3, y + 8, w - 6, h - 16);
+        ctx.fillStyle = "#000";
+        ctx.beginPath();
+        ctx.arc(x + 8, y + h - 6, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x + w - 8, y + h - 6, 4, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (entity.type === "truck") {
+        ctx.fillStyle = "#8a8a92";
+        ctx.fillRect(x + 2, y + 6, w - 4, h - 12);
+        ctx.fillStyle = "#00f5ff";
+        ctx.fillRect(x + 2, y + 6, Math.min(CELL - 8, w - 4), h - 12);
+      } else if (entity.type === "log") {
+        ctx.fillStyle = "#5a3616";
+        ctx.fillRect(x, y + 10, w, h - 20);
+        ctx.strokeStyle = "#3a2210";
+        ctx.lineWidth = 1;
+        for (let lx = x + 6; lx < x + w; lx += 10) {
+          ctx.beginPath();
+          ctx.moveTo(lx, y + 10);
+          ctx.lineTo(lx, y + h - 10);
+          ctx.stroke();
+        }
+      } else {
+        for (let i = 0; i < entity.width; i++) {
+          const cx = x + i * CELL + CELL / 2;
+          const cy = y + CELL / 2;
+          ctx.globalAlpha = entity.submerged ? 0.35 : 1;
+          ctx.fillStyle = "#00ff88";
+          ctx.beginPath();
+          ctx.ellipse(cx, cy, 15, 11, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        }
+      }
+    }
+
+    function drawFrog() {
+      let visualCol = frog.col;
+      let visualRow = frog.row;
+      let hop = 0;
+      if (frog.animating) {
+        const t = Math.min(1, frog.animT / JUMP_DURATION_MS);
+        visualCol = frog.fromCol + (frog.targetCol - frog.fromCol) * t;
+        visualRow = frog.fromRow + (frog.targetRow - frog.fromRow) * t;
+        hop = -Math.sin(t * Math.PI) * 8;
+      }
+      const cx = visualCol * CELL + CELL / 2;
+      const cy = visualRow * CELL + CELL / 2 + hop;
+      ctx.fillStyle = "#00ff88";
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, 14, 12, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#fff";
+      ctx.beginPath();
+      ctx.arc(cx - 5, cy - 6, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(cx + 5, cy - 6, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#000";
+      ctx.beginPath();
+      ctx.arc(cx - 5, cy - 6, 1.4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(cx + 5, cy - 6, 1.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawHud() {
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 16px monospace";
+      ctx.textBaseline = "middle";
+      ctx.textAlign = "left";
+      ctx.fillText(String(score), 8, CELL / 2);
+      ctx.textAlign = "center";
+      ctx.fillText("NIVEL " + level, CANVAS_W / 2, CELL / 2);
+      ctx.textAlign = "right";
+      ctx.fillStyle = "#00ff88";
+      ctx.fillText("●".repeat(Math.max(0, lives)) || "—", CANVAS_W - 8, CELL / 2);
+
+      const frac = roundTimeTotalMs > 0 ? Math.max(0, roundTimeMs / roundTimeTotalMs) : 0;
+      ctx.fillStyle = frac > 0.5 ? "#00ff88" : frac > 0.2 ? "#f5ff00" : "#ff006e";
+      ctx.fillRect(0, 0, CANVAS_W * frac, 4);
+    }
+
+    function draw() {
+      drawZones();
+      drawGoals();
+      for (const lane of lanes) {
+        for (const entity of lane.entities) drawEntity(lane, entity);
+      }
+      drawFrog();
+      drawHud();
+    }
+
+    // ── Sincronización con React ─────────────────────────────────────────────
+    let lastScore = -1;
+    let lastLives = -1;
+    let lastLevel = -1;
+    let gameOverFired = false;
+
+    function buildSlots(): HudSlot[] {
+      return [
+        { label: "Vidas", value: "🐸".repeat(Math.max(0, lives)) || "—" },
+        { label: "Nivel", value: String(level).padStart(2, "0") },
+      ];
+    }
+
+    function notifyIfChanged() {
+      if (score !== lastScore || lives !== lastLives || level !== lastLevel) {
+        lastScore = score;
+        lastLives = lives;
+        lastLevel = level;
+        onStatsChangeRef.current({ score, slots: buildSlots() });
+      }
+      if (state === "gameover" && !gameOverFired) {
+        gameOverFired = true;
+        onGameOverRef.current(score);
+      }
+    }
+
+    // ── Acciones expuestas vía ref ───────────────────────────────────────────
+    actionsRef.current = {
+      togglePause: () => {
+        paused = !paused;
+      },
+      forceGameOver: () => {
+        state = "gameover";
+      },
+      restart: () => {
+        level = 1;
+        lives = LIVES_INITIAL;
+        score = 0;
+        lanes = buildLanes(level);
+        goals = new Array(GOALS_COUNT).fill(false);
+        pendingDir = null;
+        state = "playing";
+        paused = false;
+        resetFrog();
+        startRound();
+        gameOverFired = false;
+        lastScore = -1;
+        lastLives = -1;
+        lastLevel = -1;
+        notifyIfChanged();
+      },
+    };
+
+    // ── Input ────────────────────────────────────────────────────────────────
+    function onKeyDown(e: KeyboardEvent) {
+      const dir = KEY_DIRS[e.code];
+      if (!dir) return;
+      e.preventDefault();
+      pendingDir = dir;
+    }
+    window.addEventListener("keydown", onKeyDown);
+
+    // ── Loop principal ───────────────────────────────────────────────────────
+    let lastTime: number | null = null;
+    let rafId = 0;
+
+    function loop(ts: number) {
+      const dtMs = lastTime === null ? 0 : Math.min(ts - lastTime, MAX_FRAME_DT_MS);
+      lastTime = ts;
+      if (!paused) update(dtMs);
+      draw();
+      notifyIfChanged();
+      rafId = requestAnimationFrame(loop);
+    }
+
+    startRound();
+    notifyIfChanged();
+    rafId = requestAnimationFrame(loop);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
   return (
