@@ -2,6 +2,7 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import type { HudSlot, RealGameHandle, RealGameProps } from "@/components/games/registry";
+import { FROGGER_SKINS, SkinSwitcher, useGameSkin } from "@/components/games/skins";
 
 const COLS = 16;
 const ROWS = 14;
@@ -168,6 +169,8 @@ const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGa
     forceGameOver: () => {},
     restart: () => {},
   });
+  const [skin, setSkin] = useGameSkin("frogger");
+  const skinRef = useRef(FROGGER_SKINS[skin]);
 
   useEffect(() => {
     onStatsChangeRef.current = onStatsChange;
@@ -176,6 +179,10 @@ const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGa
   useEffect(() => {
     onGameOverRef.current = onGameOver;
   }, [onGameOver]);
+
+  useEffect(() => {
+    skinRef.current = FROGGER_SKINS[skin];
+  }, [skin]);
 
   useImperativeHandle(
     ref,
