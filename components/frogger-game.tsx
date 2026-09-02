@@ -488,18 +488,18 @@ const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGa
       }
       const cx = visualCol * CELL + CELL / 2;
       const cy = visualRow * CELL + CELL / 2 + hop;
-      ctx.fillStyle = "#00ff88";
+      ctx.fillStyle = skinRef.current.frogBody;
       ctx.beginPath();
       ctx.ellipse(cx, cy, 14, 12, 0, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillStyle = "#fff";
+      ctx.fillStyle = skinRef.current.frogEyeWhite;
       ctx.beginPath();
       ctx.arc(cx - 5, cy - 6, 3, 0, Math.PI * 2);
       ctx.fill();
       ctx.beginPath();
       ctx.arc(cx + 5, cy - 6, 3, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillStyle = "#000";
+      ctx.fillStyle = skinRef.current.frogEyePupil;
       ctx.beginPath();
       ctx.arc(cx - 5, cy - 6, 1.4, 0, Math.PI * 2);
       ctx.fill();
