@@ -69,6 +69,68 @@ interface Frog {
 
 type GameState = "playing" | "gameover";
 
+function randInt(min: number, max: number) {
+  return Math.floor(min + Math.random() * (max - min + 1));
+}
+
+function placeLaneEntities(count: number, makeEntity: () => Omit<Entity, "col">): Entity[] {
+  const spacing = COLS / count;
+  const entities: Entity[] = [];
+  for (let i = 0; i < count; i++) {
+    const base = makeEntity();
+    const gap = Math.max(0, Math.floor(spacing - base.width - 1));
+    entities.push({ ...base, col: i * spacing + randInt(0, gap) });
+  }
+  return entities;
+}
+
+function buildRoadLane(row: number, dir: 1 | -1, level: number): Lane {
+  const baseSpeed = 1.5 + Math.random() * 2.5; // 1.5–4 px/frame
+  const speed = baseSpeed * Math.pow(LEVEL_SPEED_MULT, level - 1);
+  const count = randInt(3, 4);
+  const entities = placeLaneEntities(count, () => {
+    const isTruck = Math.random() < 0.3; // 30% camión (2–3 celdas), resto auto (1 celda)
+    return { width: isTruck ? randInt(2, 3) : 1, type: isTruck ? "truck" : "car" };
+  });
+  return { row, speed, dir, entities };
+}
+
+function buildRiverLane(row: number, dir: 1 | -1, level: number, kind: "log" | "turtle"): Lane {
+  const baseSpeed = 1 + Math.random() * 2; // 1–3 px/frame
+  const speed = baseSpeed * Math.pow(LEVEL_SPEED_MULT, level - 1);
+  const count = randInt(2, 3);
+  const entities = placeLaneEntities(count, () => {
+    const width = kind === "log" ? randInt(2, 4) : randInt(2, 3);
+    if (kind === "turtle") {
+      return { width, type: kind, submerged: false, submergeT: Math.random() * TURTLE_VISIBLE_MS };
+    }
+    return { width, type: kind };
+  });
+  return { row, speed, dir, entities };
+}
+
+// Mapa de carriles: carretera (filas ROW_ROAD_TOP..ROW_ROAD_BOT) + río
+// (filas ROW_RIVER_TOP..ROW_RIVER_BOT). Cada carril tiene al menos 2
+// entidades separadas por huecos atravesables; la velocidad escala +15%
+// por nivel (LEVEL_SPEED_MULT). Verificación manual: console.log(buildLanes(1))
+// y confirmar >=2 entidades y huecos visibles por carril.
+function buildLanes(level: number): Lane[] {
+  const lanes: Lane[] = [];
+
+  for (let row = ROW_ROAD_TOP; row <= ROW_ROAD_BOT; row++) {
+    const dir: 1 | -1 = (row - ROW_ROAD_TOP) % 2 === 0 ? 1 : -1;
+    lanes.push(buildRoadLane(row, dir, level));
+  }
+
+  for (let row = ROW_RIVER_TOP; row <= ROW_RIVER_BOT; row++) {
+    const dir: 1 | -1 = (row - ROW_RIVER_TOP) % 2 === 0 ? -1 : 1;
+    const kind: "log" | "turtle" = (row - ROW_RIVER_TOP) % 3 === 2 ? "turtle" : "log";
+    lanes.push(buildRiverLane(row, dir, level, kind));
+  }
+
+  return lanes;
+}
+
 const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGame(
   { onStatsChange, onGameOver },
   ref,
