@@ -3,6 +3,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import type { RealGameHandle, RealGameProps } from "@/components/games/registry";
 import { SNAKE_SKINS, SkinSwitcher, useGameSkin } from "@/components/games/skins";
+import { getHiDPIContext } from "@/components/games/canvas-dpr";
 
 const W = 800;
 const H = 600;
@@ -108,7 +109,7 @@ const SnakeGame = forwardRef<RealGameHandle, RealGameProps>(function SnakeGame(
   useEffect(() => {
     const canvasEl = canvasRef.current;
     if (!canvasEl) return;
-    const context = canvasEl.getContext("2d");
+    const context = getHiDPIContext(canvasEl, W, H);
     if (!context) return;
     const canvas = canvasEl;
     const ctx = context;

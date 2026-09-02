@@ -3,6 +3,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import type { HudSlot, RealGameHandle, RealGameProps } from "@/components/games/registry";
 import { FROGGER_SKINS, SkinSwitcher, useGameSkin } from "@/components/games/skins";
+import { getHiDPIContext } from "@/components/games/canvas-dpr";
 
 const COLS = 16;
 const ROWS = 14;
@@ -197,7 +198,7 @@ const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGa
   useEffect(() => {
     const canvasEl = canvasRef.current;
     if (!canvasEl) return;
-    const context = canvasEl.getContext("2d");
+    const context = getHiDPIContext(canvasEl, CANVAS_W, CANVAS_H);
     if (!context) return;
     const ctx = context;
 

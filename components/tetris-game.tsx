@@ -2,6 +2,7 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import type { RealGameHandle, RealGameProps } from "@/components/games/registry";
+import { getHiDPIContext } from "@/components/games/canvas-dpr";
 
 const COLS = 10;
 const ROWS = 20;
@@ -104,7 +105,7 @@ const TetrisGame = forwardRef<RealGameHandle, RealGameProps>(function TetrisGame
     const canvasEl = canvasRef.current;
     const nextCanvasEl = nextCanvasRef.current;
     if (!canvasEl || !nextCanvasEl) return;
-    const context = canvasEl.getContext("2d");
+    const context = getHiDPIContext(canvasEl, COLS * BLOCK, ROWS * BLOCK);
     const nextContext = nextCanvasEl.getContext("2d");
     if (!context || !nextContext) return;
     const canvas = canvasEl;
