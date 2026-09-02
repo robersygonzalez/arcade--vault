@@ -437,9 +437,9 @@ const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGa
       const w = entity.width * CELL;
       const h = CELL;
       if (entity.type === "car") {
-        ctx.fillStyle = "#ff006e";
+        ctx.fillStyle = skinRef.current.carBody;
         ctx.fillRect(x + 3, y + 8, w - 6, h - 16);
-        ctx.fillStyle = "#000";
+        ctx.fillStyle = skinRef.current.carWheel;
         ctx.beginPath();
         ctx.arc(x + 8, y + h - 6, 4, 0, Math.PI * 2);
         ctx.fill();
@@ -447,14 +447,14 @@ const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGa
         ctx.arc(x + w - 8, y + h - 6, 4, 0, Math.PI * 2);
         ctx.fill();
       } else if (entity.type === "truck") {
-        ctx.fillStyle = "#8a8a92";
+        ctx.fillStyle = skinRef.current.truckBody;
         ctx.fillRect(x + 2, y + 6, w - 4, h - 12);
-        ctx.fillStyle = "#00f5ff";
+        ctx.fillStyle = skinRef.current.truckCabin;
         ctx.fillRect(x + 2, y + 6, Math.min(CELL - 8, w - 4), h - 12);
       } else if (entity.type === "log") {
-        ctx.fillStyle = "#5a3616";
+        ctx.fillStyle = skinRef.current.logBody;
         ctx.fillRect(x, y + 10, w, h - 20);
-        ctx.strokeStyle = "#3a2210";
+        ctx.strokeStyle = skinRef.current.logVein;
         ctx.lineWidth = 1;
         for (let lx = x + 6; lx < x + w; lx += 10) {
           ctx.beginPath();
@@ -466,8 +466,8 @@ const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGa
         for (let i = 0; i < entity.width; i++) {
           const cx = x + i * CELL + CELL / 2;
           const cy = y + CELL / 2;
-          ctx.globalAlpha = entity.submerged ? 0.35 : 1;
-          ctx.fillStyle = "#00ff88";
+          ctx.globalAlpha = entity.submerged ? skinRef.current.turtleSubmergedAlpha : 1;
+          ctx.fillStyle = skinRef.current.turtleBody;
           ctx.beginPath();
           ctx.ellipse(cx, cy, 15, 11, 0, 0, Math.PI * 2);
           ctx.fill();
