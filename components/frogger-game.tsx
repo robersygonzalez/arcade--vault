@@ -417,13 +417,13 @@ const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGa
         const x = startCol * CELL;
         const y = ROW_GOALS * CELL;
         const w = GOAL_WIDTH_COLS * CELL;
-        ctx.fillStyle = "#0d3d20";
+        ctx.fillStyle = skinRef.current.goalFill;
         ctx.fillRect(x + 2, y + 2, w - 4, CELL - 4);
-        ctx.strokeStyle = "#f5ff00";
+        ctx.strokeStyle = skinRef.current.goalBorder;
         ctx.lineWidth = 2;
         ctx.strokeRect(x + 2, y + 2, w - 4, CELL - 4);
         if (goals[i]) {
-          ctx.fillStyle = "#00ff88";
+          ctx.fillStyle = skinRef.current.goalFilledDot;
           ctx.beginPath();
           ctx.ellipse(x + w / 2, y + CELL / 2, 12, 10, 0, 0, Math.PI * 2);
           ctx.fill();
