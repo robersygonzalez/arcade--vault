@@ -651,7 +651,7 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
-      <canvas ref={canvasRef} width={800} height={600} style={{ width: "100%", height: "100%" }} />
+      <canvas ref={canvasRef} width={800} height={600} className="game-canvas" />
       <SkinSwitcher gameId="asteroides" skin={skin} onChange={setSkin} />
     </div>
   );

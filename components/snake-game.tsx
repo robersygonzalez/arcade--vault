@@ -341,7 +341,7 @@ const SnakeGame = forwardRef<RealGameHandle, RealGameProps>(function SnakeGame(
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
-      <canvas ref={canvasRef} width={W} height={H} style={{ width: "100%", height: "100%" }} />
+      <canvas ref={canvasRef} width={W} height={H} className="game-canvas" />
       <SkinSwitcher gameId="snake" skin={skin} onChange={setSkin} />
     </div>
   );

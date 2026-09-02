@@ -422,12 +422,7 @@ const TetrisGame = forwardRef<RealGameHandle, RealGameProps>(function TetrisGame
         height: "100%",
       }}
     >
-      <canvas
-        ref={canvasRef}
-        width={COLS * BLOCK}
-        height={ROWS * BLOCK}
-        style={{ height: "100%", width: "auto" }}
-      />
+      <canvas ref={canvasRef} width={COLS * BLOCK} height={ROWS * BLOCK} className="game-canvas" />
       <canvas
         ref={nextCanvasRef}
         width={NEXT_BLOCK * 4}
