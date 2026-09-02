@@ -400,7 +400,7 @@ const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGa
         ctx.fillStyle = zoneColor(row);
         ctx.fillRect(0, row * CELL, CANVAS_W, CELL);
       }
-      ctx.strokeStyle = "rgba(245, 255, 0, 0.35)";
+      ctx.strokeStyle = skinRef.current.laneDivider;
       ctx.lineWidth = 1;
       ctx.setLineDash([10, 8]);
       for (let row = ROW_ROAD_TOP + 1; row <= ROW_ROAD_BOT; row++) {
