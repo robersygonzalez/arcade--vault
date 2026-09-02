@@ -3,6 +3,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import type { RealGameHandle, RealGameProps } from "@/components/games/registry";
 import { ARKANOID_SKINS, SkinSwitcher, useGameSkin } from "@/components/games/skins";
+import { getHiDPIContext } from "@/components/games/canvas-dpr";
 import type { ArkanoidBlockColorName, ArkanoidTint, SkinId } from "@/components/games/skins";
 
 const W = 800;
@@ -283,7 +284,7 @@ const ArkanoidGame = forwardRef<RealGameHandle, RealGameProps>(function Arkanoid
   useEffect(() => {
     const canvasEl = canvasRef.current;
     if (!canvasEl) return;
-    const context = canvasEl.getContext("2d");
+    const context = getHiDPIContext(canvasEl, W, H);
     if (!context) return;
     const canvas = canvasEl;
     const ctx = context;
@@ -356,7 +357,7 @@ const ArkanoidGame = forwardRef<RealGameHandle, RealGameProps>(function Arkanoid
     function onMouseMove(e: MouseEvent) {
       if (paused) return;
       const rect = canvas.getBoundingClientRect();
-      const scaleX = canvas.width / rect.width;
+      const scaleX = W / rect.width;
       const mouseX = (e.clientX - rect.left) * scaleX;
       paddle.x = Math.max(0, Math.min(W - paddle.w, mouseX - paddle.w / 2));
     }
@@ -549,7 +550,7 @@ const ArkanoidGame = forwardRef<RealGameHandle, RealGameProps>(function Arkanoid
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
-      <canvas ref={canvasRef} width={800} height={600} style={{ width: "100%", height: "100%" }} />
+      <canvas ref={canvasRef} width={800} height={600} className="game-canvas" />
       <SkinSwitcher gameId="arkanoid" skin={skin} onChange={setSkin} />
     </div>
   );

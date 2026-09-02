@@ -49,13 +49,11 @@ export function SkinSwitcher({
   onChange: (next: SkinId) => void;
 }) {
   return (
-    <div
-      onMouseMove={(e) => e.stopPropagation()}
-      style={{ position: "absolute", bottom: 8, right: 8, display: "flex", gap: 4, zIndex: 10 }}
-    >
+    <div className="skin-switcher" onMouseMove={(e) => e.stopPropagation()}>
       {SKIN_ORDER.map((id) => (
         <button
           key={id}
+          className="skin-switcher-btn"
           aria-pressed={id === skin}
           aria-label={`Cambiar skin de ${gameId} a ${SKIN_LABELS[id]}`}
           onClick={() => onChange(id)}
@@ -204,8 +202,117 @@ export const ARKANOID_SKINS: Record<SkinId, ArkanoidPalette> = {
   },
 };
 
+export type FroggerPalette = {
+  roadBg: string;
+  riverBg: string;
+  safeBg: string;
+  laneDivider: string; // strokeStyle listo para usar (puede incluir rgba con alpha ya resuelto)
+  carBody: string;
+  carWheel: string;
+  truckBody: string;
+  truckCabin: string;
+  logBody: string;
+  logVein: string;
+  turtleBody: string;
+  turtleSubmergedAlpha: number; // reemplaza el 0.35 hardcodeado (ctx.globalAlpha)
+  frogBody: string;
+  frogEyeWhite: string;
+  frogEyePupil: string;
+  goalFill: string;
+  goalBorder: string;
+  goalFilledDot: string;
+  hudText: string;
+  hudLives: string;
+  hudTimerGood: string;
+  hudTimerWarn: string;
+  hudTimerBad: string;
+  glowBlur: number;
+};
+
+export const FROGGER_SKINS: Record<SkinId, FroggerPalette> = {
+  clasico: {
+    roadBg: "#111318",
+    riverBg: "#00202c",
+    safeBg: "#0a2f1a",
+    laneDivider: "rgba(245, 255, 0, 0.35)",
+    carBody: "#ff006e",
+    carWheel: "#000000",
+    truckBody: "#8a8a92",
+    truckCabin: "#00f5ff",
+    logBody: "#5a3616",
+    logVein: "#3a2210",
+    turtleBody: "#00ff88",
+    turtleSubmergedAlpha: 0.35,
+    frogBody: "#00ff88",
+    frogEyeWhite: "#ffffff",
+    frogEyePupil: "#000000",
+    goalFill: "#0d3d20",
+    goalBorder: "#f5ff00",
+    goalFilledDot: "#00ff88",
+    hudText: "#ffffff",
+    hudLives: "#00ff88",
+    hudTimerGood: "#00ff88",
+    hudTimerWarn: "#f5ff00",
+    hudTimerBad: "#ff006e",
+    glowBlur: 0,
+  },
+  neon: {
+    roadBg: "#05050b",
+    riverBg: "#020814",
+    safeBg: "#020f0a",
+    laneDivider: "rgba(245, 255, 0, 0.40)",
+    carBody: "#ff006e",
+    carWheel: "#000000",
+    truckBody: "#00f5ff",
+    truckCabin: "#f5ff00",
+    logBody: "#f5ff00",
+    logVein: "rgba(0, 0, 0, 0.35)",
+    turtleBody: "#00ff88",
+    turtleSubmergedAlpha: 0.42,
+    frogBody: "#00ff88",
+    frogEyeWhite: "#ffffff",
+    frogEyePupil: "#000000",
+    goalFill: "#04241a",
+    goalBorder: "#f5ff00",
+    goalFilledDot: "#00ff88",
+    hudText: "#ffffff",
+    hudLives: "#00ff88",
+    hudTimerGood: "#00ff88",
+    hudTimerWarn: "#f5ff00",
+    hudTimerBad: "#ff006e",
+    glowBlur: 10,
+  },
+  retro: {
+    roadBg: "#140d00",
+    riverBg: "#1a1100",
+    safeBg: "#0f0900",
+    laneDivider: "#cc8800",
+    carBody: "#ffb000",
+    carWheel: "#996600",
+    truckBody: "#cc8800",
+    truckCabin: "#ffb000",
+    logBody: "#996600",
+    logVein: "#140d00",
+    turtleBody: "#ffb000",
+    turtleSubmergedAlpha: 0.48,
+    frogBody: "#ffb000",
+    frogEyeWhite: "#cc8800",
+    frogEyePupil: "#996600",
+    goalFill: "#1c1400",
+    goalBorder: "#ffb000",
+    goalFilledDot: "#cc8800",
+    hudText: "#ffb000",
+    hudLives: "#ffb000",
+    hudTimerGood: "#996600",
+    hudTimerWarn: "#cc8800",
+    hudTimerBad: "#ffb000",
+    glowBlur: 0,
+  },
+};
+
 export const GAME_SKINS = {
   asteroides: ASTEROIDS_SKINS,
   snake: SNAKE_SKINS,
   arkanoid: ARKANOID_SKINS,
+  frogger: FROGGER_SKINS,
 } as const;

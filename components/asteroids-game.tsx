@@ -3,6 +3,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import type { RealGameHandle, RealGameProps } from "@/components/games/registry";
 import { ASTEROIDS_SKINS, SkinSwitcher, useGameSkin } from "@/components/games/skins";
+import { getHiDPIContext } from "@/components/games/canvas-dpr";
 
 export type AsteroidsGameHandle = RealGameHandle;
 
@@ -46,12 +47,13 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const context = canvas.getContext("2d");
-    if (!context) return;
-    const c = context;
 
     const W = 800;
     const H = 600;
+
+    const context = getHiDPIContext(canvas, W, H);
+    if (!context) return;
+    const c = context;
 
     // ── Input ──────────────────────────────────────────────────────────────
     const keys: Record<string, boolean> = {};
@@ -651,7 +653,7 @@ const AsteroidsGame = forwardRef<RealGameHandle, RealGameProps>(function Asteroi
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
-      <canvas ref={canvasRef} width={800} height={600} style={{ width: "100%", height: "100%" }} />
+      <canvas ref={canvasRef} width={800} height={600} className="game-canvas" />
       <SkinSwitcher gameId="asteroides" skin={skin} onChange={setSkin} />
     </div>
   );

@@ -21,6 +21,12 @@ Slash commands (installed as project skills under `.claude/skills/`, mirrored un
 
 - `/spec` — draft or refine a spec.
 - `/spec-impl` — implement an approved spec.
+- `/spec-impl-game` — same as `/spec-impl` for a game spec (delegates to its SKILL.md), but once
+  implementation finishes it chains, in series and with confirmation at each step, the
+  `skin-designer` → `mobile-porter` (zone `jugador`) agents, leaving the new game's skins spec and
+  mobile spec ready. Never runs them in parallel — they'd collide on the same `NN`, and
+  `skin-designer` needs the game already registered in `REAL_GAMES`. Own skill,
+  `.claude/skills/spec-impl-game/`.
 - `/add-game` — specialized `/spec` for adding a new real, playable game (own skill, `.claude/skills/add-game/`).
   It reads `references/started-games/<slug>/` (or a from-scratch description), asks clarifying questions, and
   writes `specs/NN-slug.md` — it never writes code itself. Its `references/platform-contract.md` documents the
@@ -81,6 +87,8 @@ check `node_modules/next/dist/docs/01-app/` for the current API. Notably:
 - Usa el agente `game-planner` para decidir qué juego añadir a continuación, antes de `/add-game`
   (ver "Required workflow" arriba).
 - Usa `/add-game` para diseñar el spec de un juego real nuevo (ver "Required workflow" arriba).
+- Usa `/spec-impl-game` en vez de `/spec-impl` cuando el spec a implementar sea de un juego —
+  encadena `skin-designer` y `mobile-porter` al terminar (ver "Required workflow" arriba).
 - Usa el agente `game-jam` cuando quieras partir de un tema libre (no de un hueco del catálogo) y
   obtener 2 specs listos en `specs/game-jam/<game-id>/` (ver "Required workflow" arriba).
 - Usa el agente `skin-designer <juego>` para diseñar los 3 skins obligatorios (clasico/neon/retro)

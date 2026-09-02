@@ -2,6 +2,7 @@
 
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import type { RealGameHandle, RealGameProps } from "@/components/games/registry";
+import { getHiDPIContext } from "@/components/games/canvas-dpr";
 
 const COLS = 10;
 const ROWS = 20;
@@ -104,8 +105,8 @@ const TetrisGame = forwardRef<RealGameHandle, RealGameProps>(function TetrisGame
     const canvasEl = canvasRef.current;
     const nextCanvasEl = nextCanvasRef.current;
     if (!canvasEl || !nextCanvasEl) return;
-    const context = canvasEl.getContext("2d");
-    const nextContext = nextCanvasEl.getContext("2d");
+    const context = getHiDPIContext(canvasEl, COLS * BLOCK, ROWS * BLOCK);
+    const nextContext = getHiDPIContext(nextCanvasEl, NEXT_BLOCK * 4, NEXT_BLOCK * 4);
     if (!context || !nextContext) return;
     const canvas = canvasEl;
     const nextCanvas = nextCanvasEl;
@@ -422,23 +423,12 @@ const TetrisGame = forwardRef<RealGameHandle, RealGameProps>(function TetrisGame
         height: "100%",
       }}
     >
-      <canvas
-        ref={canvasRef}
-        width={COLS * BLOCK}
-        height={ROWS * BLOCK}
-        style={{ height: "100%", width: "auto" }}
-      />
+      <canvas ref={canvasRef} width={COLS * BLOCK} height={ROWS * BLOCK} className="game-canvas" />
       <canvas
         ref={nextCanvasRef}
         width={NEXT_BLOCK * 4}
         height={NEXT_BLOCK * 4}
-        style={{
-          position: "absolute",
-          top: 8,
-          right: 8,
-          background: "#1a1a25",
-          border: "1px solid rgba(255,255,255,0.15)",
-        }}
+        className="tetris-next-canvas"
       />
     </div>
   );
