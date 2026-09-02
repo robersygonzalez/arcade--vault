@@ -509,7 +509,7 @@ const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGa
     }
 
     function drawHud() {
-      ctx.fillStyle = "#fff";
+      ctx.fillStyle = skinRef.current.hudText;
       ctx.font = "bold 16px monospace";
       ctx.textBaseline = "middle";
       ctx.textAlign = "left";
@@ -517,11 +517,16 @@ const FroggerGame = forwardRef<RealGameHandle, RealGameProps>(function FroggerGa
       ctx.textAlign = "center";
       ctx.fillText("NIVEL " + level, CANVAS_W / 2, CELL / 2);
       ctx.textAlign = "right";
-      ctx.fillStyle = "#00ff88";
+      ctx.fillStyle = skinRef.current.hudLives;
       ctx.fillText("●".repeat(Math.max(0, lives)) || "—", CANVAS_W - 8, CELL / 2);
 
       const frac = roundTimeTotalMs > 0 ? Math.max(0, roundTimeMs / roundTimeTotalMs) : 0;
-      ctx.fillStyle = frac > 0.5 ? "#00ff88" : frac > 0.2 ? "#f5ff00" : "#ff006e";
+      ctx.fillStyle =
+        frac > 0.5
+          ? skinRef.current.hudTimerGood
+          : frac > 0.2
+            ? skinRef.current.hudTimerWarn
+            : skinRef.current.hudTimerBad;
       ctx.fillRect(0, 0, CANVAS_W * frac, 4);
     }
 
