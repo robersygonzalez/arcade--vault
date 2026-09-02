@@ -1036,6 +1036,15 @@ a {
     inset 0 0 60px rgba(0, 0, 0, 0.9),
     inset 0 0 20px rgba(0, 245, 255, 0.15);
 }
+@media (max-width: 520px) {
+  .crt {
+    padding: 12px;
+    border-radius: 16px;
+  }
+  .crt-screen {
+    border-radius: 8px / 16px;
+  }
+}
 .crt-screen::after {
   content: "";
   position: absolute;
