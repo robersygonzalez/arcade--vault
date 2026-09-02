@@ -1092,6 +1092,13 @@ a {
     border-radius: 8px / 16px;
   }
 }
+@media (max-height: 480px) and (orientation: landscape) {
+  .crt-screen {
+    width: auto;
+    height: 48dvh;
+    margin: 0 auto;
+  }
+}
 .crt-screen::after {
   content: "";
   position: absolute;
